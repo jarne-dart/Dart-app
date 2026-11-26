@@ -901,7 +901,16 @@ const SRC=typeof window!=='undefined'?(window.SpeechRecognition||window.webkitSp
 const REC={on:false,rec:null,err:'',paused:false};
 
 /* ---------- Offline-Spracherkennung (Vosk als WebAssembly, läuft komplett auf dem Gerät) ---------- */
-const OFFV={state:'off',err:'',model:null,lang:'',rec:null,ctx:null,stream:null,node:null,src:null,paused:false};
+const OFFV={state:'off',err:'',model:null,lang:'',rec:null,ctx:null,stream:null,node:null,src:null,paused:false,lvl:0,part:'',nres:0,rate:0,lastUi:0};
+/* Live-Anzeige zur Fehlersuche: Pegel, Zwischenergebnis, Anzahl Ergebnisse (nur wenn gerade nichts anderes angezeigt wird) */
+function offDbg(){
+  const now=Date.now();if(now-OFFV.lastUi<400) return;OFFV.lastUi=now;
+  if(!OFFV.rec||ui.screen!=='game'||(ui.heard&&now-ui.heard.t<4000)) return;
+  const el=document.querySelector('.lastline');if(!el) return;
+  const n=Math.min(8,Math.round(OFFV.lvl*40)),bar='▮'.repeat(n)+'▯'.repeat(8-n);
+  el.textContent='🎤 '+(OFFV.paused?'pausiert ':bar+' ')+(OFFV.part?'„'+OFFV.part+'“ ':'')+'· '+OFFV.nres+' Ergebnisse';
+}
+
 const VOSK_JS=['vosk.js','https://cdn.jsdelivr.net/npm/vosk-browser@0.0.8/dist/vosk.js','https://cdn.jsdelivr.net/npm/vosk-browser@0.0.3/dist/vosk.js'];
 const VOSK_MODEL={de:'models/vosk-model-small-de-0.15.tar.gz',en:'models/vosk-model-small-en-us-0.15.tar.gz'};
 const offAvail=()=>typeof window!=='undefined'&&!!(window.AudioContext||window.webkitAudioContext)&&typeof WebAssembly!=='undefined'&&typeof Worker!=='undefined'&&!!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia);
@@ -961,8 +970,14 @@ async function offStart(){
     const AC=window.AudioContext||window.webkitAudioContext,ctx=new AC();
     if(ctx.state==='suspended'){try{await ctx.resume();}catch(e){}}
     const src=ctx.createMediaStreamSource(st),node=ctx.createScriptProcessor(4096,1,1),rec=new OFFV.model.KaldiRecognizer();
-    rec.on('result',m=>{const t=m&&m.result&&m.result.text;if(t&&!OFFV.paused) handleSpeech([t]);});
-    node.onaudioprocess=e=>{if(OFFV.paused) return;try{rec.acceptWaveform(e.inputBuffer);}catch(_){}};
+    rec.on('result',m=>{OFFV.nres++;OFFV.part='';const t=m&&m.result&&m.result.text;if(t&&!OFFV.paused) handleSpeech([t]);});
+    rec.on('partialresult',m=>{OFFV.part=(m&&m.result&&m.result.partial)||'';offDbg();});
+    rec.on('error',m=>{REC.err='Erkennungsfehler: '+String(m&&m.error||m);render();});
+    node.onaudioprocess=e=>{
+      const d=e.inputBuffer.getChannelData(0);let sum=0;for(let i=0;i<d.length;i+=8) sum+=d[i]*d[i];
+      OFFV.lvl=Math.sqrt(sum/(d.length/8));OFFV.rate=e.inputBuffer.sampleRate;offDbg();
+      if(OFFV.paused) return;try{rec.acceptWaveform(e.inputBuffer);}catch(err){REC.err='Audio-Fehler: '+String(err&&err.message||err);}
+    };
     const mute=ctx.createGain();mute.gain.value=0;
     src.connect(node);node.connect(mute);mute.connect(ctx.destination);
     Object.assign(OFFV,{rec,ctx,stream:st,node,src,paused:false});
@@ -1012,7 +1027,8 @@ function micStart(){
   REC.rec=r;REC.on=true;REC.err='';
   try{r.start();}catch(e){REC.on=false;REC.rec=null;REC.err='Mikrofon konnte nicht gestartet werden.';}
 }
-function pauseMic(){if(OFFV.rec) OFFV.paused=true;if(REC.on&&REC.rec&&!REC.paused){REC.paused=true;try{REC.rec.stop();}catch(e){}}}
+let pauseTimer=0;
+function pauseMic(){if(OFFV.rec){OFFV.paused=true;clearTimeout(pauseTimer);pauseTimer=setTimeout(()=>{OFFV.paused=false;},9000);}if(REC.on&&REC.rec&&!REC.paused){REC.paused=true;try{REC.rec.stop();}catch(e){}}}
 function resumeMic(){if(OFFV.rec) setTimeout(()=>{OFFV.paused=false;},300);if(REC.on&&REC.rec&&REC.paused){REC.paused=false;setTimeout(()=>{try{REC.rec.start();}catch(e){}},300);}}
 
 /* ================= Kamera: Kalibrierung und Dart-Erkennung ================= */
