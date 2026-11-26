@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Dart Scorer</title>
 <link rel="manifest" href="manifest.webmanifest">
+<script src="config.js"></script>
 <meta name="theme-color" content="#0e1318">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -12,12 +13,38 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <style>
 :root{
+  --bg:#0a1322; --panel:#111f36; --panel2:#182b4a; --line:#25406a;
+  --text:#f3f6fc; --muted:#8da2c5; --accent:#f6b91a; --accent-ink:#241800;
+  --accent-bg:#2b2410; --act-bg:#152a4d; --good:#34d399; --warn:#ff6b6b; --gold:#f6b91a; --glow:rgba(54,104,196,.28);
+  --font:"Inter","SF Pro Text","Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,Roboto,sans-serif;
+}
+html[data-theme="classic"]{
   --bg:#0e1318; --panel:#18212a; --panel2:#222d39; --line:#2d3b4a;
   --text:#eef2f6; --muted:#8c9bab; --accent:#3ddc97; --accent-ink:#06261a;
-  --warn:#ff6b6b; --gold:#ffc857;
+  --accent-bg:#12332a; --act-bg:#14291f; --good:#3ddc97; --warn:#ff6b6b; --gold:#ffc857; --glow:transparent;
+}
+html[data-theme="noir"]{
+  --bg:#0d0d10; --panel:#17171c; --panel2:#222229; --line:#34343f;
+  --text:#f5f5f7; --muted:#9b9bab; --accent:#e5484d; --accent-ink:#ffffff;
+  --accent-bg:#3a1618; --act-bg:#27181b; --good:#3ecf8e; --warn:#ff8a8a; --gold:#f2b84b; --glow:rgba(229,72,77,.16);
+}
+html[data-theme="forest"]{
+  --bg:#0a1510; --panel:#12221a; --panel2:#1b3327; --line:#2b4a3a;
+  --text:#eef6f0; --muted:#8fb2a0; --accent:#e9c46a; --accent-ink:#241a00;
+  --accent-bg:#2b2511; --act-bg:#163321; --good:#4ade80; --warn:#ff7b7b; --gold:#e9c46a; --glow:rgba(63,150,100,.22);
+}
+html[data-theme="violet"]{
+  --bg:#110c1e; --panel:#1b1430; --panel2:#291f47; --line:#3d2f66;
+  --text:#f5f1fd; --muted:#aa9dca; --accent:#c4a2ff; --accent-ink:#1c0b38;
+  --accent-bg:#2c2050; --act-bg:#2a1f4b; --good:#34d399; --warn:#ff7b9c; --gold:#f6c453; --glow:rgba(132,84,230,.26);
+}
+html[data-theme="sun"]{
+  --bg:#17110a; --panel:#241a10; --panel2:#33251a; --line:#4a3825;
+  --text:#fbf3ea; --muted:#bba58e; --accent:#ff8a3d; --accent-ink:#2a1100;
+  --accent-bg:#40230e; --act-bg:#33210f; --good:#5ad68a; --warn:#ff6b6b; --gold:#ffc15a; --glow:rgba(255,138,61,.18);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-feature-settings:"tnum" 1,"cv11" 1}
 body{min-height:100vh}
 body.gamemode{position:fixed;inset:0;width:100%;overflow:hidden;overscroll-behavior:none;min-height:0}
 button{font:inherit;color:inherit;cursor:pointer}
@@ -27,7 +54,7 @@ h2{font-size:13px;text-transform:uppercase;letter-spacing:1.2px;color:var(--mute
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chip{background:var(--panel);border:1.5px solid var(--line);border-radius:12px;padding:11px 16px;font-weight:600}
 .chip.sm{padding:7px 10px;font-size:13px;border-radius:10px}
-.chip.on{border-color:var(--accent);background:#12332a;color:var(--accent)}
+.chip.on{border-color:var(--accent);background:var(--accent-bg);color:var(--accent)}
 .chip:disabled{opacity:.3}
 .chk{display:flex;align-items:center;gap:10px;background:var(--panel);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:8px}
 .chk input{width:20px;height:20px;accent-color:var(--accent)}
@@ -53,7 +80,7 @@ input[type=text]:focus,select:focus,textarea:focus{outline:none;border-color:var
 .row>button{flex:1;min-width:120px}
 .note{color:var(--muted);font-size:12px;margin-top:6px;text-align:center}
 .srow{background:var(--panel);border:1.5px solid var(--line);border-radius:14px;padding:12px;margin-bottom:8px}
-.slabel{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px}
+.slabel{font-size:13px;color:var(--muted);font-weight:600;margin-bottom:6px}
 .srow select,.srow input[type=text]{background:var(--panel2)}
 .srow input.guest,.srow select.lvl{margin-top:8px}
 .newrow{display:flex;gap:6px;margin-top:8px}
@@ -90,7 +117,7 @@ textarea{min-height:90px;font-size:12px;font-family:ui-monospace,Menlo,monospace
 .small.go{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .players{display:grid;gap:6px}
 .pc{background:var(--panel);border:2px solid transparent;border-radius:12px;padding:5px 8px;min-width:0;height:96px;overflow:hidden}
-.pc.act{border-color:var(--accent);background:#14291f}
+.pc.act{border-color:var(--accent);background:var(--act-bg)}
 .pc .nm{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
 .pc.act .nm{color:var(--accent)}
 .pc .big{font-size:32px;font-weight:800;line-height:1.05;font-variant-numeric:tabular-nums}
@@ -107,7 +134,7 @@ textarea{min-height:90px;font-size:12px;font-family:ui-monospace,Menlo,monospace
 .slot.bust .l{color:var(--warn)}
 .msg{text-align:center;font-size:13px;height:20px;line-height:20px;margin-top:4px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .msg.bad{color:var(--warn);font-weight:700}
-.msg.good{color:var(--accent);font-weight:700}
+.msg.good{color:var(--good);font-weight:700}
 .routes{height:26px;display:flex;gap:6px;justify-content:center;align-items:center;overflow:hidden}
 .route{background:var(--panel2);border-radius:7px;padding:3px 8px;font-weight:700;font-size:13px;color:var(--gold);white-space:nowrap;flex:0 0 auto}
 .route.alt{color:var(--text);font-weight:600}
@@ -144,12 +171,12 @@ table.cr th{font-size:11px;color:var(--muted);font-weight:600}
 table.cr td.nm{text-align:left;padding-left:8px;font-size:12px;font-weight:600;color:var(--muted);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;width:27%}
 table.cr td.sc{font-weight:800;font-size:17px;width:13%}
 table.cr tr.act td.nm{color:var(--accent)}
-table.cr tr.act{background:#14291f}
+table.cr tr.act{background:var(--act-bg)}
 table.cr small{color:var(--gold);font-weight:600}
 .pips{display:inline-flex;gap:1px}
 .pip{width:6px;height:6px;border-radius:50%;border:1.5px solid #4a5a6b}
 .pip.on{background:var(--gold);border-color:var(--gold)}
-.pips.closed .pip.on{background:var(--accent);border-color:var(--accent)}
+.pips.closed .pip.on{background:var(--good);border-color:var(--good)}
 
 .pc .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle}
 .pc.dead{opacity:.4}
@@ -191,6 +218,73 @@ table.ft td.z{font-weight:700;color:var(--muted)}
 .chartbox svg{display:block;width:100%;height:auto}
 .chartbox .ctab{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.6}
 .chartbox .ctab b{color:var(--text)}
+
+/* ---------- Design: Pro ---------- */
+html,body{-webkit-font-smoothing:antialiased}
+body{background:radial-gradient(900px 420px at 50% -120px,var(--glow),transparent 70%),var(--bg);background-attachment:fixed}
+h1{font-size:26px;font-weight:800;letter-spacing:-.4px;margin:0}
+h2{font-size:14px;text-transform:none;letter-spacing:.1px;color:var(--text);margin:26px 0 10px;font-weight:700}
+.top{align-items:center;margin:2px 0 14px;gap:10px}
+.ttl{display:flex;align-items:center;gap:6px;min-width:0}
+.bk{background:var(--panel);border:1px solid var(--line);border-radius:12px;width:40px;height:40px;font-size:26px;line-height:1;padding:0 0 3px;color:var(--text);flex:0 0 auto}
+.chip{border-radius:999px;border-width:1px;padding:10px 16px;background:var(--panel)}
+.chk,.srow,.rules,.ucard{border-radius:14px}
+.chk{border-width:1px}
+.srow{border-width:1px}
+.primary{border-radius:14px;box-shadow:0 8px 22px -10px var(--accent)}
+.ghost{border-radius:12px;border-width:1px}
+input[type=text],input[type=password],input[type=url],select,textarea{border-width:1px;border-radius:12px}
+input[type=password]{width:100%;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:12px 14px;font:inherit;letter-spacing:4px}
+input[type=password]:focus{outline:none;border-color:var(--accent)}
+input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
+.fld{display:block;margin-bottom:10px}
+.fld span{display:block;font-size:13px;color:var(--muted);margin-bottom:5px}
+.okmsg{color:var(--good);font-size:13px;margin-top:8px}
+.logo{width:46px;height:46px;flex:0 0 auto}
+.brand{display:flex;align-items:center;gap:12px;margin:4px 0 20px}
+.brand .bt{flex:1;min-width:0;display:flex;flex-direction:column}
+.brand .bt b{font-size:22px;font-weight:800;letter-spacing:-.3px}
+.brand .bt span{font-size:13px;color:var(--muted)}
+.acc{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:8px 14px;font-size:13px;font-weight:600;white-space:nowrap}
+.hero{display:block;width:100%;text-align:left;border:0;border-radius:20px;padding:26px 22px;color:var(--accent-ink);
+  background:radial-gradient(circle at 94% 50%,transparent 0 22px,rgba(0,0,0,.16) 22px 25px,transparent 25px 47px,rgba(0,0,0,.16) 47px 50px,transparent 50px 72px,rgba(0,0,0,.16) 72px 75px,transparent 75px),var(--accent);
+  box-shadow:0 14px 30px -14px var(--accent)}
+.hero .h1{display:block;font-size:28px;font-weight:800;letter-spacing:-.5px}
+.hero .h2{display:block;font-size:14px;opacity:.78;margin-top:4px;font-weight:500}
+.again{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;margin-top:10px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px 16px;text-align:left}
+.again span{font-weight:700;font-size:15px}
+.again small{color:var(--muted);font-size:13px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.tile{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 14px;min-height:92px}
+.tile b{font-size:16px}
+.tile small{color:var(--muted);font-size:12.5px;line-height:1.35}
+.mrow{display:flex;flex-wrap:wrap;align-items:center;gap:2px 10px;width:100%;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:8px}
+.mrow.on{border-color:var(--accent)}
+.mrow .mn{font-size:17px;font-weight:700;flex:1 1 60%}
+.mrow .md{flex:1 0 100%;order:3;font-size:13px;color:var(--muted)}
+.mrow .mc{font-size:24px;color:var(--muted);line-height:1}
+.glist{display:flex;flex-direction:column;gap:6px}
+.grow{display:grid;grid-template-columns:auto 1fr auto;gap:2px 10px;align-items:baseline;background:var(--panel2);border-radius:10px;padding:8px 10px;font-size:13px}
+.grow b{color:var(--warn)}
+.grow.w b{color:var(--good)}
+.grow .gm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.grow .gd,.grow .gt{color:var(--muted);font-size:12px}
+.grow .gt{grid-column:3;grid-row:1}
+.grow .gd{grid-column:1 / span 3}
+.themes{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.theme{display:flex;align-items:center;gap:10px;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-weight:600;font-size:14px}
+.theme.on{border-color:var(--accent);background:var(--accent-bg)}
+.theme .sw{width:26px;height:26px;border-radius:50%;flex:0 0 auto;border:1px solid rgba(255,255,255,.25)}
+/* Spielbildschirm: Anzeigetafel */
+.pc{border-radius:14px;background:var(--panel);border:1.5px solid var(--line)}
+.pc.act{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.pc.act .big{color:var(--accent)}
+.pc .big{font-weight:800;letter-spacing:-.6px}
+.slot{border-radius:10px}
+.keys button,.spec button{border-radius:12px}
+.mult button{border-radius:12px;border-width:1px}
+.next{border-radius:12px}
+.modal .card{border-width:1px;border-radius:20px}
 </style>
 </head>
 <body>
@@ -330,6 +424,9 @@ function normFields(o){
 function normHist(a){
   return (Array.isArray(a)?a:[]).filter(h=>h&&['t','d','p','a','h'].every(k=>Number.isFinite(h[k]))).map(h=>({t:h.t,d:h.d,p:h.p,a:h.a,h:h.h})).slice(-3000);
 }
+function normGames(a){
+  return (Array.isArray(a)?a:[]).filter(g=>g&&Number.isFinite(g.t)&&typeof g.mode==='string').map(g=>({t:g.t,mode:String(g.mode).slice(0,20),win:!!g.win,vs:String(g.vs||'').slice(0,60),avg:Number.isFinite(g.avg)?g.avg:null,co:Number.isFinite(g.co)?g.co:null})).slice(0,5);
+}
 function normStats(s){
   const e=emptyStats();
   if(s&&typeof s==='object'){
@@ -354,7 +451,7 @@ function normFav(f){
 function cleanUsers(list){
   const seen=new Set();
   return (Array.isArray(list)?list:[]).filter(u=>u&&typeof u.id==='string'&&typeof u.name==='string'&&u.name.trim()&&!seen.has(u.id)&&seen.add(u.id))
-    .map(u=>({id:u.id,name:u.name.trim().slice(0,16),st:normStats(u.st),fav:normFav(u.fav),hist:normHist(u.hist)}));
+    .map(u=>({id:u.id,name:u.name.trim().slice(0,16),st:normStats(u.st),fav:normFav(u.fav),hist:normHist(u.hist),games:normGames(u.games),cid:typeof u.cid==='string'?u.cid.slice(0,60):''}));
 }
 let STORE={users:[]};
 function loadStore(){
@@ -369,7 +466,7 @@ function createUser(name){
   name=String(name||'').trim().slice(0,16);
   if(!name) return {err:'Bitte einen Namen eingeben.'};
   if(STORE.users.some(u=>u.name.toLowerCase()===name.toLowerCase())) return {err:'Diesen Namen gibt es schon.'};
-  const u={id:'u'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),name,st:emptyStats(),fav:normFav(null),hist:[]};
+  const u={id:'u'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),name,st:emptyStats(),fav:normFav(null),hist:[],games:[],cid:''};
   STORE.users.push(u);saveStore();
   return {user:u};
 }
@@ -428,12 +525,20 @@ function botAim(g,p){
   const t=CLOCK[p.idx];
   return t===25?{n:25,m:2}:{n:t,m:c.skip?3:1};
 }
+/* Formkorrektur: Liegt der Bot nach einigen Darts deutlich unter (über) seinem Ziel-Average, wird er etwas genauer (ungenauer).
+   So bleiben Ausreißer durch Pech an den Doppeln selten, der Zufall bleibt aber erhalten. */
+function botForm(g,p){
+  if(!isX01(g.cfg.mode)||!p.darts||p.darts<3) return 1;
+  const target=+BOT_LEVELS[p.bot-1].avg,run=p.pts/p.darts*3;
+  if(!(run>0)) return 0.72;
+  return Math.max(0.72,Math.min(1.12,Math.pow(run/target,1.3)));
+}
 function botThrow(){
   const g=G;
   if(!g||g.phase!=='throw') return;
   const p=cur();
   if(!p.bot) return;
-  const pt=aimPoint(botAim(g,p)),s=BOT_LEVELS[p.bot-1].sigma;
+  const pt=aimPoint(botAim(g,p)),s=BOT_LEVELS[p.bot-1].sigma*botForm(g,p);
   const x=pt[0]+gauss()*s,y=pt[1]+gauss()*s;
   const h=hitFromPoint(x,y);
   h.pos=[x,y];
@@ -610,8 +715,11 @@ function commitStats(){
     else if(m==='killer'){s.killer.games++;if(win)s.killer.wins++;}
     else{s.clock.games++;if(win)s.clock.wins++;}
     Object.keys(p.f||{}).forEach(k=>{s.fields[k]=(s.fields[k]||0)+p.f[k];});
+    u.games=[{t:Date.now(),mode:m,win,vs:G.players.filter((_,j)=>j!==i).map(q=>q.name).join(', '),
+      avg:isStd(m)&&p.darts?Math.round(p.pts/p.darts*30)/10:null,co:isStd(m)&&p.dAtt?Math.round(p.dHit/p.dAtt*100):null}].concat(u.games||[]).slice(0,5);
   });
   saveStore();
+  cloudPushSoon();
 }
 
 /* Ein Leg ist gewonnen: Zähler erhöhen, ggf. Satz oder Match beenden */
@@ -784,11 +892,30 @@ const CALL={
 };
 const CL=()=>CALL[ui.cfg.lang==='en'?'en':'de'];
 const SPK={ok:typeof speechSynthesis!=='undefined'&&typeof SpeechSynthesisUtterance!=='undefined',muted:false,q:0,log:[]};
-function pickVoice(lang){
+/* Stimmenwahl: bewertet alle Systemstimmen der Sprache und nimmt die natürlichste (Microsoft „Natural“, Apple „Premium/Erweitert“, Google), außer der Spieler wählt selbst */
+const MALE_NAMES=/conrad|markus|daniel|yannick|stefan|killian|jonas|florian|hans|martin|reed|george|james|ryan|guy|thomas|alex\b|google uk english male|male/;
+const BAD_VOICE=/compact|espeak|robot|novelty|fred|zarvox|trinoids|whisper|bad news|bells|boing|bubbles|cellos|deranged|good news|hysterical|junior|kathy|pipe organ|ralph|superstar|bahh|albert|organ|wobble/;
+function voiceScore(v){
+  const n=String(v.name||'').toLowerCase();let s=0;
+  if(/natural|neural|online/.test(n)) s+=60;
+  if(/premium|enhanced|erweitert|siri/.test(n)) s+=45;
+  if(/google/.test(n)) s+=30;
+  if(BAD_VOICE.test(n)) s-=80;
+  if(MALE_NAMES.test(n)) s+=6;
+  if(v.localService) s+=3;
+  if(v.default) s+=1;
+  return s;
+}
+function voicesFor(lang){
   try{
-    const vs=speechSynthesis.getVoices()||[],pre=lang.slice(0,2).toLowerCase();
-    return vs.find(v=>v.lang&&v.lang.replace('_','-').toLowerCase()===lang.toLowerCase())||vs.find(v=>v.lang&&v.lang.toLowerCase().startsWith(pre))||null;
-  }catch(e){return null;}
+    const vs=speechSynthesis.getVoices()||[],pre=String(lang).slice(0,2).toLowerCase(),off=typeof navigator!=='undefined'&&navigator.onLine===false;
+    return vs.filter(v=>v.lang&&v.lang.toLowerCase().replace('_','-').startsWith(pre)&&(!off||v.localService!==false))
+      .map(v=>({v,s:voiceScore(v)+(v.lang.toLowerCase().replace('_','-')===String(lang).toLowerCase()?4:0)})).sort((a,b)=>b.s-a.s).map(x=>x.v);
+  }catch(e){return [];}
+}
+function pickVoice(lang){
+  const list=voicesFor(lang),want=ui.cfg.callVoice;
+  return (want&&list.find(v=>v.name===want&&v.lang.toLowerCase().replace('_','-').startsWith(lang.slice(0,2).toLowerCase())))||list[0]||null;
 }
 function say(text,o){
   o=o||{};
@@ -797,7 +924,7 @@ function say(text,o){
   try{
     if(o.flush) speechSynthesis.cancel();
     const u=new SpeechSynthesisUtterance(text),lang=(o.lang||ui.cfg.lang)==='en'?'en-GB':'de-DE',v=pickVoice(lang);
-    u.lang=lang;if(v) u.voice=v;u.rate=1.02;
+    u.lang=lang;if(v) u.voice=v;u.rate=Math.max(.6,Math.min(1.4,+ui.cfg.callRate||1));u.pitch=Math.max(.6,Math.min(1.4,+ui.cfg.callPitch||1));
     SPK.q++;
     u.onstart=()=>pauseMic();
     const done=()=>{SPK.q=Math.max(0,SPK.q-1);if(!SPK.q) resumeMic();};
@@ -805,6 +932,7 @@ function say(text,o){
     speechSynthesis.speak(u);
   }catch(e){}
 }
+try{if(typeof speechSynthesis!=='undefined') speechSynthesis.onvoiceschanged=()=>{if(typeof ui!=='undefined'&&ui.screen==='settings'&&typeof render==='function') render();};}catch(e){}
 const speak=(t,o)=>{
   if(NET.role==='host'&&G&&G.online&&ui.cfg.caller) netBroadcast({t:'say',text:t,lang:ui.cfg.lang,flush:!!(o&&o.flush)});
   if(ui.cfg.caller&&!SPK.muted) say(t,o);
@@ -840,6 +968,18 @@ const MULW={single:1,einfach:1,einzel:1,double:2,doppel:2,doppelte:2,doppelt:2,z
 const MISSW=['daneben','miss','null','nichts','vorbei','verfehlt','zero','nothing','vorbeigeworfen'];
 const UNDOW=['zurueck','korrektur','undo','rueckgaengig','back','korrigieren'];
 const NEXTW=['weiter','naechster','naechste','next','fertig','done'];
+/* typische Verhörer des kleinen Modells */
+const ALIAS={schwansee:'zwanzig',zwansee:'zwanzig',schwanzig:'zwanzig',zwanzich:'zwanzig',zwanzigs:'zwanzig',swanzig:'zwanzig',zwanzigste:'zwanzig',
+  fenf:'fuenf',finf:'fuenf',fuenft:'fuenf',fuenfe:'fuenf',fuenfte:'fuenf',zwoelfe:'zwoelf',zwoelfte:'zwoelf',zwolf:'zwoelf',zwoelft:'zwoelf',
+  sechsen:'sechs',sieben:'sieben',achte:'acht',neune:'neun',zehne:'zehn',elfe:'elf'};
+function lev(a,b){const m=a.length,n=b.length;if(Math.abs(m-n)>1) return 9;let p=[];for(let j=0;j<=n;j++) p[j]=j;
+  for(let i=1;i<=m;i++){let c=[i];for(let j=1;j<=n;j++) c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c;}return p[n];}
+function fuzzyNum(t){
+  if(t.length<6) return null;
+  let best=null,bd=2;
+  for(const w in NUMW){if(w.length<6||/^[a-z]+$/.test(w)===false) continue;const d=lev(t,w);if(d<bd){bd=d;best=NUMW[w];}else if(d===bd&&best!==null&&NUMW[w]!==best) best=null;}
+  return best;
+}
 function normSpeech(s){
   return String(s).toLowerCase().replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss').replace(/bull's/g,'bulls').replace(/[^a-z0-9 ]+/g,' ').replace(/\s+/g,' ').trim();
 }
@@ -866,7 +1006,8 @@ function parseSpeech(text){
     if(UNDOW.includes(t)){out.push({k:'cmd',c:'undo'});pm=null;continue;}
     if(NEXTW.includes(t)){out.push({k:'cmd',c:'next'});pm=null;continue;}
     let n=null;
-    if(/^\d+$/.test(t)) n=+t; else if(t in NUMW) n=NUMW[t];
+    if(t in ALIAS) t=ALIAS[t];
+    if(/^\d+$/.test(t)) n=+t; else if(t in NUMW) n=NUMW[t]; else n=fuzzyNum(t);
     if(n===null) continue;
     if(n===25){out.push({k:'dart',n:25,m:pm===2?2:1});pm=null;continue;}
     if(n===0){out.push({k:'dart',n:0,m:0});pm=null;continue;}
@@ -902,7 +1043,7 @@ const SRC=typeof window!=='undefined'?(window.SpeechRecognition||window.webkitSp
 const REC={on:false,rec:null,err:'',paused:false};
 
 /* ---------- Offline-Spracherkennung (Vosk als WebAssembly, läuft komplett auf dem Gerät) ---------- */
-const OFFV={state:'off',err:'',model:null,lang:'',rec:null,ctx:null,stream:null,node:null,src:null,paused:false,lvl:0,part:'',nres:0,rate:0,lastUi:0};
+const OFFV={state:'off',err:'',model:null,lang:'',rec:null,ctx:null,stream:null,node:null,src:null,paused:false,lvl:0,part:'',nres:0,rate:0,lastUi:0,strictFailed:false};
 /* Live-Anzeige zur Fehlersuche: Pegel, Zwischenergebnis, Anzahl Ergebnisse (nur wenn gerade nichts anderes angezeigt wird) */
 function offDbg(){
   const now=Date.now();if(now-OFFV.lastUi<400) return;OFFV.lastUi=now;
@@ -960,6 +1101,18 @@ async function offLoad(){
     return false;
   }finally{render();}
 }
+/* Wortliste für die Erkennung: das Modell darf nur Dartbegriffe wählen (Zahlen, Double/Triple, Bull, daneben, zurück, weiter) */
+function offGrammar(lang){
+  const de=['null','eins','zwei','drei','vier','fünf','sechs','sieben','acht','neun','zehn','elf','zwölf','dreizehn','vierzehn','fünfzehn','sechzehn','siebzehn','achtzehn','neunzehn','zwanzig','fünfundzwanzig','und',
+    'doppel','doppelt','double','dreifach','triple','einfach','single','bull','bullseye','daneben','vorbei','miss','zurück','korrektur','weiter','nächster','fertig'];
+  const en=['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen','twenty','five','and',
+    'double','triple','treble','single','bull','bullseye','miss','nothing','back','undo','next','done'];
+  return JSON.stringify((lang==='en'?en:de).concat(['[unk]']));
+}
+function offNewRec(ctx,strict){
+  const m=OFFV.model;
+  return strict?new m.KaldiRecognizer(ctx.sampleRate,offGrammar(OFFV.lang)):new m.KaldiRecognizer(ctx.sampleRate);
+}
 async function offStart(){
   if(!offAvail()){REC.err='Offline-Erkennung wird von diesem Browser nicht unterstützt.';return;}
   if(OFFV.rec) return;
@@ -970,10 +1123,14 @@ async function offStart(){
     if(!REC.on){st.getTracks().forEach(t=>t.stop());return;}
     const AC=window.AudioContext||window.webkitAudioContext,ctx=new AC();
     if(ctx.state==='suspended'){try{await ctx.resume();}catch(e){}}
-    const src=ctx.createMediaStreamSource(st),node=ctx.createScriptProcessor(4096,1,1),rec=new OFFV.model.KaldiRecognizer(ctx.sampleRate);
+    const src=ctx.createMediaStreamSource(st),node=ctx.createScriptProcessor(4096,1,1),rec=(()=>{try{return offNewRec(ctx,!!ui.cfg.voiceStrict&&!OFFV.strictFailed);}catch(e){OFFV.strictFailed=true;return offNewRec(ctx,false);}})();
     rec.on('result',m=>{OFFV.nres++;OFFV.part='';const t=m&&m.result&&m.result.text;if(t&&!OFFV.paused) handleSpeech([t]);});
     rec.on('partialresult',m=>{OFFV.part=(m&&m.result&&m.result.partial)||'';offDbg();});
-    rec.on('error',m=>{REC.err='Erkennungsfehler: '+String(m&&m.error||m);render();});
+    rec.on('error',m=>{
+      const txt=String(m&&m.error||m);
+      if(ui.cfg.voiceStrict&&!OFFV.strictFailed){OFFV.strictFailed=true;micStop();setTimeout(()=>offStart(),200);return;}
+      REC.err='Erkennungsfehler: '+txt;render();
+    });
     node.onaudioprocess=e=>{
       const d=e.inputBuffer.getChannelData(0);let sum=0;for(let i=0;i<d.length;i+=8) sum+=d[i]*d[i];
       OFFV.lvl=Math.sqrt(sum/(d.length/8));OFFV.rate=e.inputBuffer.sampleRate;offDbg();
@@ -1366,13 +1523,29 @@ function camEvaluate(cur,w,h){
 
 /* ================= Online-Spiel: jeder an seinem eigenen Board (WebRTC über PeerJS) ================= */
 /* Der Host führt das Spiel; Mitspieler schicken ihre Würfe an den Host, der den Stand an alle zurückgibt. */
-const NET={role:null,peer:null,conn:null,conns:{},code:'',me:null,cid:'',status:'',err:'',hl:0,lobby:[],last:'',applying:false};
+const NET={role:null,peer:null,conn:null,conns:{},code:'',me:null,cid:'',status:'',err:'',hl:0,lobby:[],last:'',applying:false,uo:''};
 try{NET.cid=sessionStorage.getItem('dart-cid')||'';}catch(e){}
 if(!NET.cid){NET.cid='c'+Math.random().toString(36).slice(2,10)+Date.now().toString(36);try{sessionStorage.setItem('dart-cid',NET.cid);}catch(e){}}
 const ROOM_CH='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const newCode=()=>Array.from({length:5},()=>ROOM_CH[Math.floor(Math.random()*ROOM_CH.length)]).join('');
 const PEERJS=['https://unpkg.com/peerjs@1.5.3/dist/peerjs.min.js','https://cdn.jsdelivr.net/npm/peerjs@1.5.3/dist/peerjs.min.js'];
 const histLen=()=>NET.role==='guest'?NET.hl:HIST.length;
+/* Online darf nur der eigene Wurf korrigiert werden: Wem gehört der Wurf, den ein Rückgängig gerade zurücknehmen würde? (gleiche Logik wie undo) */
+function undoOwner(){
+  if(!HIST.length) return '';
+  try{
+    let i=HIST.length-1,st=JSON.parse(HIST[i]);
+    while(i>0&&st.phase!=='over'&&st.phase!=='legover'&&(st.players[st.cur].bot||(st.phase==='review'&&st.cfg.auto))){i--;st=JSON.parse(HIST[i]);}
+    return st.players[st.cur].owner||'';
+  }catch(e){return '';}
+}
+function canUndo(){
+  if(NET.role&&G&&G.online){
+    if(NET.role==='guest') return NET.hl>0&&NET.uo===NET.me;
+    return HIST.length>0&&undoOwner()===NET.me;
+  }
+  return histLen()>0;
+}
 /* Welcher lokale Benutzer bekommt die Statistik dieses Spielers? (online: nur der eigene Spieler) */
 function statUser(p){
   if(!p) return null;
@@ -1482,6 +1655,7 @@ function hostCall(conn,m){
   const fn=m.fn,a=Array.isArray(m.args)?m.args:[];
   const turn=fn==='throwDart'||fn==='throwBull'||fn==='nextPlayer'||fn==='killerRandom';
   if(turn&&cur().owner!==cid){NET.last='';render();return;}   // veraltete Eingabe: Stand nochmal schicken
+  if(fn==='undo'&&undoOwner()!==cid){NET.last='';render();return;}   // nur den eigenen Wurf korrigieren
   const pos=v=>Array.isArray(v)&&v.length===2&&v.every(Number.isFinite)?[+v[0],+v[1]]:null;
   NET.applying=true;
   try{
@@ -1506,7 +1680,7 @@ function netStart(){
 /* Host: jede Änderung geht an alle Mitspieler */
 function netSync(){
   if(NET.role!=='host'||!G||!G.online) return;
-  const s=JSON.stringify({G,hl:HIST.length});
+  const s=JSON.stringify({G,hl:HIST.length,uo:undoOwner()});
   if(s===NET.last) return;
   NET.last=s;
   netBroadcast({t:'state',s});
@@ -1515,8 +1689,9 @@ function netSync(){
 function netGate(fn,args){
   if(!NET.role||NET.applying||!G||!G.online) return false;
   const turn=fn==='throwDart'||fn==='throwBull'||fn==='nextPlayer'||fn==='killerRandom';
-  if(NET.role==='host') return turn&&cur().owner!==NET.me;
+  if(NET.role==='host') return fn==='undo'?undoOwner()!==NET.me:(turn&&cur().owner!==NET.me);
   if(turn&&cur().owner!==NET.me) return true;
+  if(fn==='undo'&&NET.uo!==NET.me) return true;
   if(NET.conn&&NET.conn.open){
     const a=fn==='throwDart'?[{n:args[0].n,m:args[0].m,pos:args[0].pos||null}]:args;
     netSend(NET.conn,{t:'call',fn,args:a});
@@ -1560,7 +1735,7 @@ function guestMsg(m,to){
   else if(m.t==='say'){if(!SPK.muted&&typeof m.text==='string') say(m.text,{lang:m.lang,flush:!!m.flush});}
   else if(m.t==='cancel') speakCancel();
   else if(m.t==='err'){clearTimeout(to);netClose();NET.err=String(m.msg||'Beitritt nicht möglich.');ui.screen='join';render();}
-  else if(m.t==='end'){clearTimeout(to);const wasGame=!!G;netClose();NET.err='Der Host hat den Raum geschlossen.';G=null;HIST=[];ui.screen='setup';render();}
+  else if(m.t==='end'){clearTimeout(to);const wasGame=!!G;netClose();NET.err='Der Host hat den Raum geschlossen.';G=null;HIST=[];ui.screen='home';render();}
 }
 function guestDrop(conn){
   if(NET.role!=='guest'||NET.conn!==conn) return;
@@ -1571,7 +1746,7 @@ function guestDrop(conn){
 function netApplyState(str){
   let o;try{o=JSON.parse(str);}catch(e){return;}
   if(!o||!o.G) return;
-  G=o.G;NET.hl=+o.hl||0;
+  G=o.G;NET.hl=+o.hl||0;NET.uo=String(o.uo||'');
   if(committed){
     if(committed.gid!==G.gid) committed=null;                                   // neues Spiel (Revanche)
     else if(G.phase!=='over'){STORE=JSON.parse(committed.backup);saveStore();committed=null;}   // Host hat zurückgenommen
@@ -1610,10 +1785,135 @@ function renderJoin(){
     <button class="primary" data-act="join-go" ${NET.status==='Verbinde …'?'disabled':''}>${NET.status==='Verbinde …'?'Verbinde …':'Beitreten'}</button></div>`;
 }
 
+/* ================= Konto & Server (optional, Supabase) ================= */
+/* Die App spricht nur Funktionen (RPC) des Servers an. PIN-Prüfung, Sperre und Rechte liegen auf dem Server (siehe supabase-setup.sql). */
+const CLOUD={url:'',key:''};
+function cloudLoadCfg(){
+  let u='',k='';
+  try{const w=typeof window!=='undefined'&&window.DART_CLOUD;if(w){u=w.url||'';k=w.key||'';}}catch(e){}
+  try{const s=JSON.parse(localStorage.getItem('dart-cloud')||'null');if(s){u=u||s.url||'';k=k||s.key||'';}}catch(e){}
+  CLOUD.url=String(u||'').trim().replace(/\/+$/,'');CLOUD.key=String(k||'').trim();
+}
+const cloudOn=()=>!!(CLOUD.url&&CLOUD.key&&/^https:\/\//.test(CLOUD.url));
+const ACC={id:'',name:'',token:'',pub:false,busy:false,err:'',msg:'',tab:'login',name2:'',pin:'',pin2:'',oldpin:'',cfgUrl:'',cfgKey:''};
+const PROF={list:null,loading:false,err:'',open:null,data:{}};
+function accLoad(){
+  try{const s=JSON.parse(localStorage.getItem('dart-acc')||'null');if(s&&s.token&&s.id){ACC.id=String(s.id);ACC.name=String(s.name||'');ACC.token=String(s.token);ACC.pub=!!s.pub;}}catch(e){}
+}
+function accSave(){try{if(ACC.token) localStorage.setItem('dart-acc',JSON.stringify({id:ACC.id,name:ACC.name,token:ACC.token,pub:ACC.pub})); else localStorage.removeItem('dart-acc');}catch(e){}}
+const CLOUD_ERR={bad_name:'Der Name muss 2 bis 16 Zeichen lang sein.',bad_pin:'Die PIN muss aus genau 6 Ziffern bestehen.',name_taken:'Diesen Namen gibt es schon. Melde dich an oder wähle einen anderen.',
+  bad_login:'Name oder PIN stimmt nicht.',locked:'Zu viele Fehlversuche. Bitte in 15 Minuten noch einmal versuchen.',no_session:'Du bist nicht mehr angemeldet. Bitte neu anmelden.',
+  not_found:'Dieses Profil ist nicht (mehr) öffentlich.',too_big:'Die Daten sind zu groß.',bad_data:'Ungültige Daten.'};
+async function rpc(fn,args){
+  if(!cloudOn()) throw new Error('Server ist nicht eingerichtet.');
+  const ctl=typeof AbortController!=='undefined'?new AbortController():null,to=setTimeout(()=>{if(ctl)ctl.abort();},15000);
+  try{
+    const r=await fetch(CLOUD.url+'/rest/v1/rpc/'+fn,{method:'POST',headers:Object.assign({'Content-Type':'application/json',apikey:CLOUD.key},/^eyJ/.test(CLOUD.key)?{Authorization:'Bearer '+CLOUD.key}:{}),body:JSON.stringify(args||{}),signal:ctl?ctl.signal:undefined});
+    const txt=await r.text();let j=null;try{j=txt?JSON.parse(txt):null;}catch(e){}
+    if(!r.ok) throw new Error(r.status===404?'Server-Funktionen fehlen. Wurde supabase-setup.sql ausgeführt?':(j&&(j.message||j.hint))||('Serverfehler '+r.status));
+    if(j&&typeof j==='object'&&!Array.isArray(j)&&j.error) throw new Error(CLOUD_ERR[j.error]||String(j.error));
+    return j;
+  }catch(e){
+    if(e&&e.name==='AbortError') throw new Error('Keine Antwort vom Server (Zeitüberschreitung).');
+    if(e instanceof TypeError) throw new Error('Keine Verbindung zum Server. Bist du online?');
+    throw e;
+  }finally{clearTimeout(to);}
+}
+const totalGames=st=>st?['x01','c121','cricket','clock','killer'].reduce((a,k)=>a+((st[k]&&+st[k].games)||0),0):0;
+/* Das lokale Profil, das zum angemeldeten Konto gehört (wird bei Bedarf angelegt) */
+function accLocalUser(){
+  if(!ACC.id) return null;
+  let u=STORE.users.find(x=>x.cid===ACC.id)||STORE.users.find(x=>!x.cid&&x.name.toLowerCase()===ACC.name.toLowerCase());
+  if(!u){const r=createUser(ACC.name);if(r.err) return null;u=r.user;}
+  u.cid=ACC.id;return u;
+}
+function accRecentGames(u){return (u.games||[]).slice(0,5);}
+/* Abgleich nach der Anmeldung: Wer mehr Spiele hat, gewinnt (so geht nichts verloren) */
+async function accSync(){
+  const u=accLocalUser();if(!u) return;
+  const me=await rpc('dart_me',{p_token:ACC.token});
+  const cloudN=totalGames(me.stats),localN=totalGames(u.st);
+  if(cloudN>localN){u.st=normStats(me.stats);u.hist=normHist(me.hist);u.games=normGames(me.games);}
+  else if(localN>cloudN){await cloudPush(u);}
+  ACC.pub=!!me.public;accSave();saveStore();
+}
+async function cloudPush(u){
+  if(!ACC.token||!u||u.cid!==ACC.id||!cloudOn()) return;
+  await rpc('dart_push',{p_token:ACC.token,p_stats:u.st,p_hist:u.hist.slice(-300),p_games:accRecentGames(u)});
+}
+let pushTimer=0,pushBusy=false;
+function cloudPushSoon(){
+  if(!ACC.token||!cloudOn()) return;
+  clearTimeout(pushTimer);
+  pushTimer=setTimeout(async()=>{
+    if(pushBusy) return cloudPushSoon();
+    pushBusy=true;
+    try{const u=STORE.users.find(x=>x.cid===ACC.id);await cloudPush(u);ACC.err='';}
+    catch(e){ACC.err='Statistik konnte nicht hochgeladen werden: '+e.message;if(/anmelden/.test(e.message)) {ACC.token='';accSave();}}
+    finally{pushBusy=false;if(typeof render==='function'&&ui.screen==='account') render();}
+  },800);
+}
+async function accEnter(kind){
+  if(ACC.busy) return;
+  const name=String(ACC.name2||'').trim(),pin=String(ACC.pin||'');
+  ACC.err='';ACC.msg='';
+  if(name.length<2){ACC.err=CLOUD_ERR.bad_name;return render();}
+  if(!/^\d{6}$/.test(pin)){ACC.err=CLOUD_ERR.bad_pin;return render();}
+  if(kind==='register'&&pin!==ACC.pin2){ACC.err='Die beiden PINs sind nicht gleich.';return render();}
+  ACC.busy=true;render();
+  try{
+    const r=await rpc(kind==='register'?'dart_register':'dart_login',{p_name:name,p_pin:pin});
+    Object.assign(ACC,{id:r.id,name:r.name,token:r.token,pub:!!r.public,pin:'',pin2:''});accSave();
+    await accSync();
+    ACC.msg=kind==='register'?'Konto angelegt. Du bist angemeldet.':'Angemeldet.';
+  }catch(e){ACC.err=e.message;}
+  ACC.busy=false;render();
+}
+async function accLogout(){
+  const t=ACC.token;ACC.token='';ACC.id='';ACC.name='';ACC.pub=false;ACC.msg='Abgemeldet.';accSave();render();
+  try{if(t) await rpc('dart_logout',{p_token:t});}catch(e){}
+}
+async function accSetPublic(v){
+  if(ACC.busy||!ACC.token) return;
+  ACC.busy=true;ACC.err='';render();
+  try{const u=accLocalUser();if(v&&u) await cloudPush(u);const r=await rpc('dart_set_public',{p_token:ACC.token,p_public:!!v});ACC.pub=!!r.public;accSave();ACC.msg=ACC.pub?'Dein Profil ist jetzt öffentlich.':'Dein Profil ist jetzt privat.';PROF.list=null;}
+  catch(e){ACC.err=e.message;}
+  ACC.busy=false;render();
+}
+async function accChangePin(){
+  if(ACC.busy) return;
+  ACC.err='';ACC.msg='';
+  if(!/^\d{6}$/.test(ACC.oldpin)||!/^\d{6}$/.test(ACC.pin)){ACC.err=CLOUD_ERR.bad_pin;return render();}
+  ACC.busy=true;render();
+  try{await rpc('dart_change_pin',{p_token:ACC.token,p_old:ACC.oldpin,p_new:ACC.pin});ACC.msg='PIN geändert. Auf anderen Geräten musst du dich neu anmelden.';ACC.oldpin='';ACC.pin='';}
+  catch(e){ACC.err=e.message;}
+  ACC.busy=false;render();
+}
+async function profLoadList(){
+  if(PROF.loading||!cloudOn()) return;
+  PROF.loading=true;PROF.err='';render();
+  try{PROF.list=await rpc('dart_list_public',{})||[];}catch(e){PROF.err=e.message;PROF.list=null;}
+  PROF.loading=false;render();
+}
+async function profOpen(id){
+  PROF.open=id;PROF.err='';
+  if(!PROF.data[id]){
+    render();
+    try{
+      const r=await rpc('dart_get_profile',{p_id:id,p_token:ACC.token||null});
+      PROF.data[id]={id:'p:'+r.id,cid:r.id,name:r.name,st:normStats(r.stats),fav:normFav(null),hist:normHist(r.hist),games:normGames(r.games),pub:!!r.public};
+    }catch(e){PROF.err=e.message;PROF.open=null;}
+  }
+  render();
+}
+const profUser=id=>{for(const k of Object.keys(PROF.data)) if(PROF.data[k].id===id) return PROF.data[k];return null;};
+
 /* ================= Darstellung ================= */
 const root=document.getElementById('app');
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const MODE_NAMES={'301':'301','501':'501','701':'701','121':'121 Checkout',cricket:'Cricket',killer:'Killer',clock:'Around the Clock'};
+const THEMES=[['pro','Blau und Gold','#0a1322','#f6b91a'],['noir','Schwarz und Rot','#0d0d10','#e5484d'],['forest','Dunkelgrün und Sand','#0a1510','#e9c46a'],['violet','Violett','#110c1e','#c4a2ff'],['sun','Braun und Orange','#17110a','#ff8a3d'],['classic','Klassik (Grün)','#0e1318','#3ddc97']];
+const themeOf=t=>THEMES.some(x=>x[0]===t)?t:'pro';
 const HC_STARTS=[101,201,301,401,501,601,701,801,901];
 const OUTN={straight:'Straight-Out',double:'Double-Out',master:'Master-Out'};
 function cleanHc(h){
@@ -1635,15 +1935,15 @@ function hcText(p,c){
 }
 const ui={
   join:{code:'',name:'',uid:''},
-  screen:'setup',input:(typeof innerWidth!=='undefined'&&innerWidth>=700)?'board':'keys',mult:1,askMenu:false,
+  screen:'home',input:(typeof innerWidth!=='undefined'&&innerWidth>=700)?'board':'keys',mult:1,askMenu:false,
   newSlot:null,newText:'',err:'',focusNew:false,askDelete:null,msg:'',exportText:'',
   editUser:null,favErr:'',favScore:'',favRoute:'',hcOpen:null,fv:null,chartUser:null,chartMetric:'avg',chartRange:'day',chartSel:null,
-  cfg:{mode:'501',players:2,doubleOut:true,doubleIn:false,skip:false,attempts:10,easy:false,auto:true,bull:true,legsBo:1,setsBo:0,lives:3,caller:false,callDarts:false,callRest:true,lang:'de',voice:'browser',
+  cfg:{mode:'501',players:2,doubleOut:true,doubleIn:false,skip:false,attempts:10,easy:false,auto:true,bull:true,legsBo:1,setsBo:0,lives:3,caller:false,callDarts:false,callRest:true,callVoice:'',callRate:1,callPitch:1,theme:'pro',lang:'de',voice:'browser',voiceStrict:true,
        slots:[0,1,2,3].map(i=>({uid:null,guest:'Gast '+(i+1),bot:0,hc:cleanHc(null)}))}
 };
 function saveSetup(){
   const c=ui.cfg;
-  try{localStorage.setItem('dart-setup2',JSON.stringify({mode:c.mode,players:c.players,doubleOut:c.doubleOut,doubleIn:c.doubleIn,skip:c.skip,attempts:c.attempts,easy:c.easy,auto:c.auto,bull:c.bull,legsBo:c.legsBo,setsBo:c.setsBo,lives:c.lives,caller:c.caller,callDarts:c.callDarts,callRest:c.callRest,lang:c.lang,voice:c.voice,slots:c.slots.map(x=>({uid:x.uid,guest:x.guest,bot:x.bot,hc:x.hc}))}));}catch(e){}
+  try{localStorage.setItem('dart-setup2',JSON.stringify({mode:c.mode,players:c.players,doubleOut:c.doubleOut,doubleIn:c.doubleIn,skip:c.skip,attempts:c.attempts,easy:c.easy,auto:c.auto,bull:c.bull,legsBo:c.legsBo,setsBo:c.setsBo,lives:c.lives,caller:c.caller,callDarts:c.callDarts,callRest:c.callRest,lang:c.lang,voice:c.voice,voiceStrict:c.voiceStrict,callVoice:c.callVoice,callRate:c.callRate,callPitch:c.callPitch,theme:c.theme,slots:c.slots.map(x=>({uid:x.uid,guest:x.guest,bot:x.bot,hc:x.hc}))}));}catch(e){}
 }
 function loadSetup(){
   try{
@@ -1651,12 +1951,16 @@ function loadSetup(){
     if(!s||typeof s!=='object') return;
     if(s.mode in MODE_NAMES) c.mode=s.mode;
     if([1,2,3,4].includes(s.players)) c.players=s.players;
-    ['doubleOut','doubleIn','skip','easy','auto','bull','caller','callDarts','callRest'].forEach(k=>{if(typeof s[k]==='boolean')c[k]=s[k];});
+    ['doubleOut','doubleIn','skip','easy','auto','bull','caller','callDarts','callRest','voiceStrict'].forEach(k=>{if(typeof s[k]==='boolean')c[k]=s[k];});
     if([5,10,20].includes(s.attempts)) c.attempts=s.attempts;
     if([1,3,5,7,9,11].includes(s.legsBo)) c.legsBo=s.legsBo;
     if([0,3,5,7].includes(s.setsBo)) c.setsBo=s.setsBo;
     if([3,5,7].includes(s.lives)) c.lives=s.lives;
     if(s.lang==='de'||s.lang==='en') c.lang=s.lang;
+    if(typeof s.callVoice==='string') c.callVoice=s.callVoice.slice(0,120);
+    if(+s.callRate>=.6&&+s.callRate<=1.4) c.callRate=+s.callRate;
+    if(+s.callPitch>=.6&&+s.callPitch<=1.4) c.callPitch=+s.callPitch;
+    if(typeof s.theme==='string'&&THEMES.some(x=>x[0]===s.theme)) c.theme=s.theme;
     if(s.voice==='browser'||s.voice==='offline') c.voice=s.voice;
     if(Array.isArray(s.slots)) s.slots.slice(0,4).forEach((sl,i)=>{
       if(!sl||typeof sl!=='object') return;
@@ -1665,7 +1969,7 @@ function loadSetup(){
   }catch(e){}
 }
 const loadJoinName=()=>{try{return localStorage.getItem('dart-joinname')||(STORE.users[0]&&STORE.users[0].name)||'';}catch(e){return '';}};
-loadStore();loadSetup();
+loadStore();loadSetup();cloudLoadCfg();accLoad();
 try{const hm=/join=([A-Za-z0-9]{4,8})/.exec((typeof location!=='undefined'&&location.hash)||'');if(hm){ui.join.code=hm[1].toUpperCase();ui.join.name=loadJoinName();ui.screen='join';}}catch(e){}
 ui.cfg.slots.forEach(sl=>{if(sl.uid&&!findUser(sl.uid)) sl.uid=null;});
 
@@ -1714,10 +2018,148 @@ function formatText(c){
   return 'Ein einzelnes Spiel.';
 }
 
+/* ---------- Navigation & Bildschirme ---------- */
+const hdr=(title,back,right)=>`<div class="top"><div class="ttl">${back?`<button class="bk" data-act="${back}" aria-label="Zurück">‹</button>`:''}<h1>${title}</h1></div>${right||''}</div>`;
+const fmtDate=t=>{try{const d=new Date(t);return d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});}catch(e){return '';}};
+const LOGO=`<svg class="logo" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="var(--bg)" stroke="var(--accent)" stroke-width="2.5"/><circle cx="24" cy="24" r="15" fill="none" stroke="#e5484d" stroke-width="3"/><circle cx="24" cy="24" r="9" fill="none" stroke="var(--text)" stroke-width="3"/><circle cx="24" cy="24" r="3.2" fill="var(--accent)"/></svg>`;
+const MODE_INFO={
+  '301':['301','Von 301 auf null, Finish mit Doppel'],'501':['501','Der Klassiker, von 501 auf null'],'701':['701','Lange Distanz, von 701 auf null'],
+  '121':['121 Checkout','Trainiere dein Finish: 9 Darts pro Versuch'],clock:['Around the Clock','Alle Zahlen von 1 bis 20 und Bull der Reihe nach'],
+  cricket:['Cricket','15 bis 20 und Bull schließen, Punkte sammeln'],killer:['Killer','Eigene Zahl treffen, Gegnern Leben abnehmen']
+};
+const slotSummary=()=>activeSlots().map((s,i)=>slotName(s,i)).join(', ');
+function gamesList(g){
+  if(!g||!g.length) return `<div class="sline">Noch keine Spiele gespeichert.</div>`;
+  return `<div class="glist">${g.map(x=>`<div class="grow ${x.win?'w':''}"><b>${x.win?'Sieg':'Niederlage'}</b><span class="gm">${esc(MODE_NAMES[x.mode]||x.mode)}${x.vs?' gegen '+esc(x.vs):''}</span><span class="gd">${x.avg!==null?'Ø '+x.avg.toFixed(1):''}${x.co!==null?' · Checkout '+x.co+' %':''}</span><span class="gt">${fmtDate(x.t)}</span></div>`).join('')}</div>`;
+}
+function statGrid(u){
+  const s=u.st,x=s.x01,k=s.c121;
+  return `<div class="sgrid">
+    <div><span>${x.games}</span>Spiele (301–701)</div><div><span>${x.wins}</span>Siege</div>
+    <div><span>${avgOf(x.pts,x.darts)}</span>Ø pro 3 Darts</div><div><span>${pct(x.dHit,x.dAtt)}</span>Checkout-Quote (${x.dHit}/${x.dAtt})</div>
+    <div><span>${x.hi}</span>Beste Aufnahme</div><div><span>${x.darts}</span>Darts gesamt</div></div>
+  <div class="sline">121 Checkout: bestes Ziel <b>${k.best||'–'}</b> (Easy <b>${k.bestEasy||'–'}</b>) · ${k.hits}/${k.attempts} Versuche geschafft · ${k.games} Spiele</div>
+  <div class="sline">Cricket: ${s.cricket.wins}/${s.cricket.games} Siege · Killer: ${s.killer.wins}/${s.killer.games} · Around the Clock: ${s.clock.wins}/${s.clock.games}</div>`;
+}
+
+function renderHome(){
+  const c=ui.cfg,n=STORE.users.length;
+  root.innerHTML=`<div class="wrap home">
+    <div class="brand">${LOGO}<div class="bt"><b>Dart Scorer</b><span>Punkte, Statistik und Online-Spiel</span></div>
+      ${cloudOn()?`<button class="acc" data-act="go-account">${ACC.token?'👤 '+esc(ACC.name):'Anmelden'}</button>`:''}</div>
+    ${banner()}${NET.err?`<div class="banner">${esc(NET.err)}</div>`:''}
+    <button class="hero" data-act="go-modes"><span class="h1">Spiel starten</span><span class="h2">Spielmodus wählen und loslegen</span></button>
+    <button class="again" data-act="start"><span>Nochmal: ${esc(MODE_NAMES[c.mode])}</span><small>${esc(slotSummary())}</small></button>
+    <div class="tiles">
+      <button class="tile" data-act="go-stats"><b>Statistik</b><small>${n?n+(n===1?' Benutzer':' Benutzer'):'Benutzer anlegen'}</small></button>
+      <button class="tile" data-act="go-profiles"><b>Profile</b><small>Öffentliche Profile ansehen</small></button>
+      <button class="tile" data-act="join-open"><b>Raum beitreten</b><small>Mit Code online spielen</small></button>
+      <button class="tile" data-act="go-settings"><b>Einstellungen</b><small>Ansage, Sprache, Design</small></button>
+    </div></div>`;
+}
+function renderModes(){
+  const row=k=>`<button class="mrow ${ui.cfg.mode===k?'on':''}" data-act="pick-mode" data-v="${k}"><span class="mn">${MODE_INFO[k][0]}</span><span class="md">${MODE_INFO[k][1]}</span><span class="mc">›</span></button>`;
+  root.innerHTML=`<div class="wrap">${hdr('Spielmodus','go-home')}
+    <h2>Klassisch</h2>${['301','501','701'].map(row).join('')}
+    <h2>Training</h2>${['121','clock'].map(row).join('')}
+    <h2>Für mehrere Spieler</h2>${['cricket','killer'].map(row).join('')}</div>`;
+}
+function renderSettings(){
+  const c=ui.cfg,lang=c.lang==='en'?'en-GB':'de-DE',vs=SPK.ok?voicesFor(lang):[];
+  const vopts=`<option value="">Automatisch (beste Stimme)</option>`+vs.map(v=>`<option value="${esc(v.name)}" ${c.callVoice===v.name?'selected':''}>${esc(v.name)}${v.localService===false?' (online)':''}</option>`).join('');
+  const cur=pickVoice(lang);
+  root.innerHTML=`<div class="wrap">${hdr('Einstellungen','go-home')}${banner()}
+    <h2>Ansage (Master Caller)</h2>
+    <label class="chk"><input type="checkbox" data-opt="caller" ${c.caller?'checked':''}> Master Caller (Punkte werden angesagt)</label>
+    ${c.caller?`<label class="chk"><input type="checkbox" data-opt="callDarts" ${c.callDarts?'checked':''}> Jeden Dart ansagen</label>
+    <label class="chk"><input type="checkbox" data-opt="callRest" ${c.callRest?'checked':''}> Restpunktzahl ansagen</label>`:''}
+    <div class="slabel">Sprache der Ansage</div>
+    <div class="chips"><button class="chip ${c.lang==='de'?'on':''}" data-act="clang" data-v="de">Deutsch</button><button class="chip ${c.lang==='en'?'on':''}" data-act="clang" data-v="en">English</button></div>
+    <div class="slabel" style="margin-top:14px">Stimme</div>
+    <select data-callvoice aria-label="Stimme">${vopts}</select>
+    <div class="uhint">${SPK.ok?(vs.length?`Aktuell: <b>${esc(cur?cur.name:'Standard')}</b>. Die App wählt automatisch die natürlichste Stimme deines Geräts.`:'Dein Gerät hat keine Stimme für diese Sprache gemeldet.'):'Dieser Browser hat keine Sprachausgabe.'}</div>
+    <div class="slabel" style="margin-top:14px">Tempo: ${(+c.callRate||1).toFixed(2)}</div>
+    <input type="range" min="0.7" max="1.3" step="0.05" value="${+c.callRate||1}" data-callrate aria-label="Tempo">
+    <div class="slabel" style="margin-top:10px">Tonhöhe: ${(+c.callPitch||1).toFixed(2)}</div>
+    <input type="range" min="0.7" max="1.3" step="0.05" value="${+c.callPitch||1}" data-callpitch aria-label="Tonhöhe">
+    <div class="row" style="margin-top:12px"><button class="ghost" data-act="ctest">🔊 Stimme testen</button><button class="ghost" data-act="vreset">Zurücksetzen</button></div>
+    <div class="rules" style="margin-top:10px">Bessere Stimmen: Am Computer in Edge die „Natural“-Stimmen von Microsoft (online). Auf dem iPhone unter Einstellungen → Bedienungshilfen → Gesprochene Inhalte → Stimmen eine „Erweitert“- oder „Premium“-Stimme laden. Auf Android in den Einstellungen für Text-to-Speech Stimmendaten von Google installieren.</div>
+
+    <h2>Spracheingabe (Würfe ansagen)</h2>
+    <div class="chips"><button class="chip ${c.voice==='offline'?'':'on'}" data-act="voice" data-v="browser">Browser (online)</button><button class="chip ${c.voice==='offline'?'on':''}" data-act="voice" data-v="offline">Offline (auf dem Gerät)</button></div>
+    ${c.voice==='offline'?`<div class="rules" style="margin-top:8px">${offAvail()?'Die Erkennung läuft komplett auf dem Gerät, ohne Internet. Dafür muss einmal das Sprachmodell (ca. 45 MB) geladen werden, am besten im WLAN.':'Dieser Browser unterstützt die Offline-Erkennung nicht.'}<br><b>Status:</b> ${OFFV.state==='ready'?'Modell bereit ✔':OFFV.state==='loading'?'Modell wird geladen …':OFFV.state==='error'?esc(OFFV.err):'noch nicht geladen'}</div>${offAvail()&&OFFV.state!=='ready'&&OFFV.state!=='loading'?`<button class="ghost" style="margin-top:6px" data-act="off-load">Modell jetzt laden</button>`:''}<label class="chk" style="margin-top:8px"><input type="checkbox" data-opt="voiceStrict" ${c.voiceStrict?'checked':''}> Nur Dartbegriffe erkennen (genauer bei Zahlen)</label>`:''}
+    <div class="rules" style="margin-top:8px">Im Spiel startest du die Spracheingabe oben mit 🎤, z. B. „Triple zwanzig“, „Doppel sechzehn“, „Bull“, „daneben“, „zurück“. Die Kamera erreichst du im Spiel unten über 📷. Beides braucht den Zugriff auf Mikrofon bzw. Kamera und läuft nur auf einer https-Adresse. Sprachausgabe: ${SPK.ok?'verfügbar':'nicht verfügbar'} · Spracherkennung im Browser: ${SRC?'verfügbar':'nicht verfügbar'}.</div>
+
+    <h2>Design</h2>
+    <div class="themes">${THEMES.map(([k,n,a,b])=>`<button class="theme ${themeOf(c.theme)===k?'on':''}" data-act="theme" data-v="${k}"><span class="sw" style="background:linear-gradient(135deg,${a} 50%,${b} 50%)"></span>${n}</button>`).join('')}</div>
+
+    <h2>Konto und Server</h2>
+    <div class="rules">${cloudOn()?(ACC.token?`Angemeldet als <b>${esc(ACC.name)}</b>. Profil: ${ACC.pub?'öffentlich':'privat'}.`:'Ein Server ist verbunden. Mit einem Konto werden deine Statistiken online gespeichert.'):'Optional: Mit einem eigenen Server (Supabase) können Statistiken online gespeichert und öffentliche Profile angezeigt werden.'}</div>
+    <button class="ghost" style="margin-top:8px" data-act="go-account">${cloudOn()?(ACC.token?'Konto verwalten':'Anmelden oder registrieren'):'Server einrichten'}</button>
+
+    <h2>Daten sichern</h2>
+    <div class="rules">Die Benutzer und Statistiken liegen in diesem Browser auf diesem Gerät. Mit einem Backup kannst du sie sichern oder auf ein anderes Gerät übertragen. Importieren ersetzt die vorhandenen Benutzer.</div>
+    <div class="row"><button class="ghost" data-act="export">Backup erzeugen</button></div>
+    <textarea data-imp placeholder="Backup-Text hier einfügen und importieren" style="margin-top:8px">${esc(ui.exportText)}</textarea>
+    <div class="row" style="margin-top:8px"><button class="ghost" data-act="import">Importieren</button></div>
+    ${ui.msg?`<div class="note">${esc(ui.msg)}</div>`:''}
+  </div>`;
+}
+function renderAccount(){
+  const inp=(k,label,type,extra)=>`<label class="fld"><span>${label}</span><input type="${type}" data-acc="${k}" value="${esc(ACC[k]||'')}" ${extra||''} autocomplete="off" autocapitalize="none"></label>`;
+  const pin=(k,label)=>inp(k,label,'password','inputmode="numeric" pattern="[0-9]*" maxlength="6"');
+  const msgs=`${ACC.err?`<div class="err">${esc(ACC.err)}</div>`:''}${ACC.msg?`<div class="okmsg">${esc(ACC.msg)}</div>`:''}`;
+  let body='';
+  if(!cloudOn()){
+    body=`<div class="rules">Für Konten, Online-Statistiken und öffentliche Profile brauchst du einen kostenlosen Server bei Supabase. Die Einrichtung dauert etwa 10 Minuten und steht in der Datei <b>SERVER-EINRICHTUNG.txt</b>. Danach trägst du hier die Projekt-Adresse und den öffentlichen Schlüssel („Publishable key“) ein, oder du schreibst sie in die Datei <b>config.js</b>.</div>
+      ${inp('cfgUrl','Projekt-Adresse (https://….supabase.co)','text','inputmode="url"')}${inp('cfgKey','Öffentlicher Schlüssel (Publishable key)','text')}
+      <button class="primary" data-act="cfg-save">Server verbinden</button>${msgs}`;
+  } else if(!ACC.token){
+    const reg=ACC.tab==='register';
+    body=`<div class="chips" style="margin-bottom:12px"><button class="chip ${reg?'':'on'}" data-act="acc-tab" data-v="login">Anmelden</button><button class="chip ${reg?'on':''}" data-act="acc-tab" data-v="register">Neues Konto</button></div>
+      ${inp('name2','Name (2 bis 16 Zeichen)','text','maxlength="16"')}${pin('pin','PIN (6 Ziffern)')}${reg?pin('pin2','PIN wiederholen'):''}
+      <button class="primary" data-act="${reg?'acc-register':'acc-login'}" ${ACC.busy?'disabled':''}>${ACC.busy?'Bitte warten …':reg?'Konto anlegen':'Anmelden'}</button>${msgs}
+      <div class="rules" style="margin-top:12px">${reg?'Wähle eine PIN, die du dir merkst. Sie wird nur als Hash gespeichert. Ein Administrator kann sie bei Verlust zurücksetzen.':'Nach 5 falschen PINs ist das Konto für 15 Minuten gesperrt.'}</div>
+      <button class="ghost sm" style="margin-top:10px" data-act="cfg-clear">Server-Verbindung entfernen</button>`;
+  } else {
+    const u=STORE.users.find(x=>x.cid===ACC.id);
+    body=`<div class="ucard"><div class="uhead"><b>👤 ${esc(ACC.name)}</b></div>
+      <div class="sline">Dein Profil ist <b>${ACC.pub?'öffentlich':'privat'}</b>.${ACC.pub?' Andere sehen Statistik und letzte Spiele.':' Nur du siehst deine Statistik.'}</div>
+      <div class="row" style="margin-top:10px"><button class="ghost" data-act="acc-pub" data-v="${ACC.pub?0:1}" ${ACC.busy?'disabled':''}>${ACC.pub?'Auf privat stellen':'Öffentlich machen'}</button><button class="ghost" data-act="acc-sync" ${ACC.busy?'disabled':''}>Jetzt synchronisieren</button></div>
+      <h2 style="margin-top:18px">Letzte Spiele</h2>${gamesList(u?u.games:[])}</div>
+      ${msgs}
+      <h2>PIN ändern</h2>${pin('oldpin','Alte PIN')}${pin('pin','Neue PIN')}
+      <button class="ghost" data-act="acc-pin" ${ACC.busy?'disabled':''}>PIN ändern</button>
+      <button class="ghost danger" style="width:100%;margin-top:18px" data-act="acc-logout">Abmelden</button>`;
+  }
+  root.innerHTML=`<div class="wrap">${hdr('Konto','go-home')}${body}</div>`;
+}
+function renderProfiles(){
+  let body='';
+  if(!cloudOn()){
+    body=`<div class="rules">Öffentliche Profile gibt es, sobald ein Server verbunden ist. Die Einrichtung findest du unter Einstellungen → Konto und Server.</div><button class="ghost" data-act="go-account" style="margin-top:8px">Server einrichten</button>`;
+  } else if(PROF.open&&PROF.data[PROF.open]){
+    const u=PROF.data[PROF.open];
+    body=`<div class="ucard"><div class="uhead"><b>${esc(u.name)}</b><div class="btns"><button class="ghost sm" data-act="chartuser" data-v="${esc(u.id)}">${ui.chartUser===u.id?'Verlauf zu':'📈 Verlauf'}</button><button class="ghost sm" data-act="fv-user" data-v="${esc(u.id)}">🎯 Feldstatistik</button></div></div>
+      ${statGrid(u)}${ui.chartUser===u.id?chartPanel(u):''}<h2 style="margin-top:16px">Letzte Spiele</h2>${gamesList(u.games)}</div>
+      <button class="ghost" data-act="prof-back">‹ Alle Profile</button>`;
+  } else if(PROF.open){
+    body=`<div class="note">Profil wird geladen …</div>`;
+  } else if(PROF.list===null){
+    body=PROF.loading?`<div class="note">Profile werden geladen …</div>`:`<button class="ghost" data-act="prof-refresh">Profile laden</button>`;
+  } else if(!PROF.list.length){
+    body=`<div class="rules">Noch hat niemand sein Profil öffentlich gemacht. Du kannst das unter Konto selbst tun.</div>`;
+  } else {
+    body=PROF.list.map(p=>{const x=p.x01||{};return `<button class="mrow" data-act="prof-open" data-v="${esc(p.id)}"><span class="mn">${esc(p.name)}</span><span class="md">${x.games||0} Spiele · Ø ${avgOf(x.pts||0,x.darts||0)} · Checkout ${pct(x.dHit||0,x.dAtt||0)}</span><span class="mc">›</span></button>`;}).join('');
+  }
+  root.innerHTML=`<div class="wrap">${hdr('Profile','go-home',cloudOn()&&!PROF.open?`<button class="ghost sm" data-act="prof-refresh">↻</button>`:'')}
+    ${PROF.err?`<div class="err" style="margin-bottom:8px">${esc(PROF.err)}</div>`:''}${body}${fieldModal()}</div>`;
+}
+
+
 function renderSetup(){
   const c=ui.cfg;
-  const chips=['301','501','701','121','cricket','killer','clock'].map(k=>`<button class="chip ${c.mode===k?'on':''}" data-act="mode" data-v="${k}">${MODE_NAMES[k]}</button>`).join('');
-  const pcs=[1,2,3,4].map(n=>`<button class="chip ${c.players===n?'on':''}" data-act="players" data-v="${n}" ${c.mode==='killer'&&n<2?'disabled':''}>${n}</button>`).join('');
+    const pcs=[1,2,3,4].map(n=>`<button class="chip ${c.players===n?'on':''}" data-act="players" data-v="${n}" ${c.mode==='killer'&&n<2?'disabled':''}>${n}</button>`).join('');
   const slots=Array.from({length:c.players},(_,i)=>slotRow(i)).join('');
   const hasRemote=activeSlots().some(s=>s.remote);
   let opts='',format='';
@@ -1743,27 +2185,18 @@ function renderSetup(){
     <div class="chips">${[0,3,5,7].map(n=>`<button class="chip ${c.setsBo===n?'on':''}" data-act="setsbo" data-v="${n}">${n?n:'Aus'}</button>`).join('')}</div>
     <div class="rules" style="margin-top:8px">${formatText(c)}</div>`;
   root.innerHTML=`<div class="wrap">
-    <div class="top"><h1 style="margin:0">🎯 Dart Scorer</h1><button class="ghost" data-act="stats">👤 Benutzer</button></div>
+    ${hdr(esc(MODE_NAMES[c.mode]),'go-modes')}
     ${banner()}${NET.err?`<div class="banner">${esc(NET.err)}</div>`:''}
-    <h2>Spielmodus</h2><div class="chips">${chips}</div>
+    <div class="rules">${MODE_INFO[c.mode][1]}.</div>
     ${opts?`<h2>Regeln</h2>${opts}`:''}
     ${format}
     <h2>Ablauf</h2>
     <label class="chk"><input type="checkbox" data-opt="bull" ${c.bull?'checked':''}> Vor dem Spiel ausbullen (wer beginnt)</label>
     <label class="chk"><input type="checkbox" data-opt="auto" ${c.auto?'checked':''}> Automatisch zum nächsten Spieler wechseln</label>
-    <h2>Ansage, Sprache &amp; Kamera</h2>
-    <label class="chk"><input type="checkbox" data-opt="caller" ${c.caller?'checked':''}> Master Caller (Punkte werden angesagt)</label>
-    ${c.caller?`<label class="chk"><input type="checkbox" data-opt="callDarts" ${c.callDarts?'checked':''}> Jeden Dart ansagen</label>
-    <label class="chk"><input type="checkbox" data-opt="callRest" ${c.callRest?'checked':''}> Restpunktzahl ansagen</label>`:''}
-    <div class="slabel" style="margin:10px 0 6px">Sprache (Ansage &amp; Spracheingabe)</div>
-    <div class="chips"><button class="chip ${c.lang==='de'?'on':''}" data-act="clang" data-v="de">Deutsch</button><button class="chip ${c.lang==='en'?'on':''}" data-act="clang" data-v="en">English</button><button class="chip" data-act="ctest">🔊 Test</button></div>
-    <div class="slabel" style="margin:12px 0 6px">Spracherkennung</div>
-    <div class="chips"><button class="chip ${c.voice==='offline'?'':'on'}" data-act="voice" data-v="browser">Browser (online)</button><button class="chip ${c.voice==='offline'?'on':''}" data-act="voice" data-v="offline">Offline (auf dem Gerät)</button></div>
-    ${c.voice==='offline'?`<div class="rules" style="margin-top:8px">${offAvail()?'Die Erkennung läuft komplett auf dem Gerät, ohne Internet. Dafür muss einmal das Sprachmodell (ca. 45 MB) geladen werden – am besten jetzt im WLAN.':'Dieser Browser unterstützt die Offline-Erkennung nicht.'}<br><b>Status:</b> ${OFFV.state==='ready'?'Modell bereit ✔':OFFV.state==='loading'?'Modell wird geladen …':OFFV.state==='error'?esc(OFFV.err):'noch nicht geladen'}</div>${offAvail()&&OFFV.state!=='ready'&&OFFV.state!=='loading'?`<button class="ghost" style="margin-top:6px" data-act="off-load">Modell jetzt laden</button>`:''}`:''}
-    <div class="rules" style="margin-top:8px">Im Spiel findest du oben 🎤 (Würfe ansagen, z. B. „Triple zwanzig“, „Doppel sechzehn“, „Bull“, „daneben“, „zurück“) und unten den Reiter 📷 (Kamera erkennt die Darts). Beides braucht den Zugriff auf Mikrofon bzw. Kamera und funktioniert nur auf einer eigenen https-Adresse, nicht in der Vorschau. Sprachausgabe: ${SPK.ok?'verfügbar':'nicht verfügbar'} · Spracherkennung: ${SRC?'verfügbar':'nicht verfügbar'}.</div>
     <h2>Spieler</h2><div class="chips" style="margin-bottom:10px">${pcs}</div>
     ${slots}
     ${hasRemote?`<div class="note" style="text-align:left">Online-Spieler treten mit einem Raumcode bei und werfen an ihrem eigenen Board.</div>`:''}
+    <div class="rules" style="margin-top:14px">Ansage: <b>${c.caller?'an':'aus'}</b> · Spracheingabe: <b>${c.voice==='offline'?'offline':'Browser'}</b> <button class="ghost sm" style="margin-left:6px" data-act="go-settings">Ändern</button></div>
     <button class="primary" data-act="${hasRemote?'host-open':'start'}">${hasRemote?'🌐 Raum erstellen':'Spiel starten'}</button>
     <button class="ghost" style="width:100%;margin-top:10px" data-act="join-open">🌐 Raum beitreten</button>
   </div>`;
@@ -1819,7 +2252,7 @@ function fieldModal(){
     counts=G.players[pi].f||{};title=G.players[pi].name;
     if(G.players.length>1) tabs=`<div class="seg2">${G.players.map((q,i)=>`<button class="${i===pi?'on':''}" data-act="fv-pi" data-v="${i}">${esc(q.name)}</button>`).join('')}</div>`;
   } else {
-    const u=findUser(f.uid);
+    const u=findUser(f.uid)||profUser(f.uid);
     if(!u) return '';
     counts=u.st.fields;title=u.name+' · alle Spiele';
   }
@@ -1892,18 +2325,9 @@ function chartPanel(u){
 
 function renderStats(){
   const us=STORE.users;
-  const cards=us.length?us.map(u=>{
-    const s=u.st,x=s.x01,k=s.c121;
-    return `<div class="ucard"><div class="uhead"><b>${esc(u.name)}</b><div class="btns"><button class="ghost sm" data-act="chartuser" data-v="${esc(u.id)}">${ui.chartUser===u.id?'Verlauf zu':'📈 Verlauf'}</button><button class="ghost sm" data-act="fv-user" data-v="${esc(u.id)}">🎯 Feldstatistik</button><button class="ghost sm" data-act="editfav" data-v="${esc(u.id)}">${ui.editUser===u.id?'Vorlieben zu':'Checkout-Vorlieben'}</button><button class="ghost sm danger" data-act="del" data-v="${esc(u.id)}">Löschen</button></div></div>
-      <div class="sgrid">
-        <div><span>${x.games}</span>Spiele (301–701)</div><div><span>${x.wins}</span>Siege</div>
-        <div><span>${avgOf(x.pts,x.darts)}</span>Ø pro 3 Darts</div><div><span>${pct(x.dHit,x.dAtt)}</span>Checkout-Quote (${x.dHit}/${x.dAtt})</div>
-        <div><span>${x.hi}</span>Beste Aufnahme</div><div><span>${x.darts}</span>Darts gesamt</div>
-      </div>
-      <div class="sline">121 Checkout: bestes Ziel <b>${k.best||'–'}</b> (Easy <b>${k.bestEasy||'–'}</b>) · ${k.hits}/${k.attempts} Versuche geschafft · ${k.games} Spiele</div>
-      <div class="sline">Cricket: ${s.cricket.wins}/${s.cricket.games} Siege · Killer: ${s.killer.wins}/${s.killer.games} · Around the Clock: ${s.clock.wins}/${s.clock.games}</div>
-      ${ui.chartUser===u.id?chartPanel(u):''}${ui.editUser===u.id?favPanel(u):''}</div>`;
-  }).join(''):`<p class="note">Noch keine Benutzer. Lege beim Spielstart einen an.</p>`;
+  const cards=us.length?us.map(u=>`<div class="ucard"><div class="uhead"><b>${esc(u.name)}${u.cid&&u.cid===ACC.id?' <small style="color:var(--muted);font-weight:500">· mit Konto verbunden</small>':''}</b><div class="btns"><button class="ghost sm" data-act="chartuser" data-v="${esc(u.id)}">${ui.chartUser===u.id?'Verlauf zu':'📈 Verlauf'}</button><button class="ghost sm" data-act="fv-user" data-v="${esc(u.id)}">🎯 Feldstatistik</button><button class="ghost sm" data-act="editfav" data-v="${esc(u.id)}">${ui.editUser===u.id?'Vorlieben zu':'Checkout-Vorlieben'}</button><button class="ghost sm danger" data-act="del" data-v="${esc(u.id)}">Löschen</button></div></div>
+      ${statGrid(u)}<div class="slabel" style="margin:14px 0 6px">Letzte Spiele</div>${gamesList(u.games)}
+      ${ui.chartUser===u.id?chartPanel(u):''}${ui.editUser===u.id?favPanel(u):''}</div>`).join(''):`<p class="note">Noch keine Benutzer. Lege beim Spielstart einen an.</p>`;
   let modal='';
   if(ui.askDelete){
     const u=findUser(ui.askDelete);
@@ -1911,15 +2335,10 @@ function renderStats(){
       <div class="row"><button class="ghost" data-act="del-no">Abbrechen</button><button class="next" data-act="del-yes">Löschen</button></div></div></div>`;
   }
   root.innerHTML=`<div class="wrap">
-    <div class="top"><h1 style="margin:0">👤 Benutzer</h1><button class="ghost" data-act="back">‹ Zurück</button></div>
+    ${hdr('Statistik','go-home')}
     ${banner()}
-    <div style="margin-top:14px">${cards}</div>
-    <h2>Backup</h2>
-    <div class="rules">Die Daten liegen nur in diesem Browser auf diesem Gerät. Mit dem Backup kannst du sie sichern oder auf ein anderes Gerät übertragen. Importieren ersetzt die vorhandenen Benutzer.</div>
-    <div class="row"><button class="ghost" data-act="export">Backup erzeugen</button></div>
-    <textarea data-imp placeholder="Backup-Text hier einfügen und importieren" style="margin-top:8px">${esc(ui.exportText)}</textarea>
-    <div class="row" style="margin-top:8px"><button class="ghost" data-act="import">Importieren</button></div>
-    ${ui.msg?`<div class="note">${esc(ui.msg)}</div>`:''}
+    <div>${cards}</div>
+    <div class="rules">Backup und Import deiner Benutzer findest du unter Einstellungen.</div>
     ${modal}${fieldModal()}
   </div>`;
 }
@@ -2081,7 +2500,7 @@ function renderGame(){
     const setsLine=m.setsToWin&&!li.setWon?`<p class="life" style="text-align:center">Sätze: ${g.players.map((q,i)=>`${esc(q.name)} ${li.setsShown[i]}`).join(' : ')}</p>`:'';
     modal=`<div class="modal"><div class="card"><h2>${esc(w.name)} gewinnt ${li.setWon?'den Satz':'das Leg'}!</h2>
       <div class="score">${line}</div>${setsLine}
-      <div class="row">${w.bot?'':`<button class="ghost" data-act="undo">Wurf korrigieren</button>`}<button class="next" data-act="nextleg">${li.setWon?'Nächster Satz':'Nächstes Leg'}</button></div></div></div>`;
+      <div class="row">${w.bot||!canUndo()?'':`<button class="ghost" data-act="undo">Wurf korrigieren</button>`}<button class="next" data-act="nextleg">${li.setWon?'Nächster Satz':'Nächstes Leg'}</button></div></div></div>`;
   } else if(g.phase==='over'){
     const w=g.winner>=0?g.players[g.winner]:null;
     let th,tr;
@@ -2096,7 +2515,7 @@ function renderGame(){
     modal=`<div class="modal"><div class="card"><h2>${w?'🏆 '+esc(w.name)+' gewinnt!':'Spiel beendet – kein Finish geschafft'}</h2>${result}
       <table><tr>${th}</tr>${g.players.map(q=>`<tr>${tr(q)}</tr>`).join('')}</table>
       ${life?`<p class="life">${life}</p>`:''}
-      <div class="row">${w&&w.bot?'':`<button class="ghost" data-act="undo">Wurf korrigieren</button>`}${NET.role==='guest'?'<div class="note" style="align-self:center">Revanche startet der Host</div>':'<button class="next" data-act="rematch">Revanche</button>'}</div>
+      <div class="row">${(w&&w.bot)||!canUndo()?'':`<button class="ghost" data-act="undo">Wurf korrigieren</button>`}${NET.role==='guest'?'<div class="note" style="align-self:center">Revanche startet der Host</div>':'<button class="next" data-act="rematch">Revanche</button>'}</div>
       <div class="row" style="margin-top:8px"><button class="ghost" data-act="fv-game">Feldstatistik</button><button class="ghost" data-act="menu-yes">Zum Menü</button></div></div></div>`;
   } else if(ui.askMenu){
     modal=`<div class="modal"><div class="card"><h2>${g.online?(NET.role==='host'?'Raum schließen?':'Spiel verlassen?'):'Spiel abbrechen?'}</h2><p style="color:var(--muted);margin:0 0 14px">${g.online?(NET.role==='host'?'Das beendet das Spiel für alle Mitspieler.':'Mit dem Raumcode und deinem Namen kannst du wieder beitreten.'):'Ein abgebrochenes Spiel wird nicht in die Statistik übernommen.'}</p>
@@ -2107,8 +2526,8 @@ function renderGame(){
   if(multi) sub=(m.setsToWin?`Satz ${m.setNo} (Bo${c.setsBo}) · Leg ${m.legNo} (Bo${c.legsBo})`:`Leg ${m.legNo} (Bo${c.legsBo})`)+(sub?' · '+sub:'');
   const canEnd=(g.phase==='throw'||review)&&!watch;
   const right=kpick
-    ?`<button class="small ic" data-act="undo" aria-label="Rückgängig" ${histLen()?'':'disabled'}>↶</button><button class="small go" data-act="krandom" ${watch?'disabled':''}>Zufällig</button>`
-    :`<button class="small ic" data-act="undo" aria-label="Rückgängig" ${histLen()?'':'disabled'}>↶</button><button class="small ${review&&!watch?'go':''}" data-act="next" ${canEnd?'':'disabled'}>Weiter ▸</button>`;
+    ?`<button class="small ic" data-act="undo" aria-label="Rückgängig" ${canUndo()?'':'disabled'}>↶</button><button class="small go" data-act="krandom" ${watch?'disabled':''}>Zufällig</button>`
+    :`<button class="small ic" data-act="undo" aria-label="Rückgängig" ${canUndo()?'':'disabled'}>↶</button><button class="small ${review&&!watch?'go':''}" data-act="next" ${canEnd?'':'disabled'}>Weiter ▸</button>`;
   root.innerHTML=`<div class="game">
     <div class="gtop"><div class="t"><b>${g.online?'🌐 ':''}${MODE_NAMES[c.mode]}</b>${esc(sub)}</div><div class="hb">${(SRC&&c.voice!=='offline')||(c.voice==='offline'&&offAvail())?`<button class="small ic ${REC.on?'live':''}" data-act="mic" aria-label="Spracheingabe">🎤</button>`:''}${c.caller?`<button class="small ic" data-act="mute" aria-label="Ansage an/aus">${SPK.muted?'🔇':'🔊'}</button>`:''}<button class="small" data-act="menu">Menü</button></div></div>
     ${top}
@@ -2134,7 +2553,8 @@ function schedule(){
   else if(ph==='review'&&bot) go(1000,nextPlayer);
 }
 function render(){
-  ui.screen==='setup'?renderSetup():ui.screen==='stats'?renderStats():ui.screen==='lobby'?renderLobby():ui.screen==='join'?renderJoin():renderGame();
+  ({home:renderHome,modes:renderModes,setup:renderSetup,settings:renderSettings,account:renderAccount,profiles:renderProfiles,stats:renderStats,lobby:renderLobby,join:renderJoin}[ui.screen]||renderGame)();
+  try{if(document.documentElement&&document.documentElement.setAttribute) document.documentElement.setAttribute('data-theme',themeOf(ui.cfg.theme));}catch(e){}
   netSync();
   if(typeof document!=='undefined'&&document.body&&document.body.classList) document.body.classList.toggle('gamemode',ui.screen==='game');
   if(ui.screen==='game'&&ui.input==='cam') camAttach();
@@ -2194,13 +2614,36 @@ root.addEventListener('click',e=>{
   else if(a==='create'){doCreate(+v);}
   else if(a==='host-open'){NET.err='';unlockSpeech();netHostOpen();}
   else if(a==='join-open'){NET.err='';ui.join.name=ui.join.name||loadJoinName();ui.screen='join';}
-  else if(a==='join-back'){NET.err='';netClose();ui.screen='setup';}
+  else if(a==='join-back'){NET.err='';netClose();ui.screen='home';}
   else if(a==='join-go'){unlockSpeech();netJoin();return;}
   else if(a==='lobby-start'){unlockSpeech();netStart();}
-  else if(a==='lobby-close'){netClose();ui.screen='setup';G=null;HIST=[];}
+  else if(a==='lobby-close'){netClose();ui.screen='home';G=null;HIST=[];}
   else if(a==='cancelnew'){ui.newSlot=null;ui.err='';}
-  else if(a==='stats'){ui.screen='stats';ui.msg='';ui.exportText='';ui.editUser=null;}
-  else if(a==='back'){ui.screen='setup';ui.editUser=null;}
+  else if(a==='stats'||a==='go-stats'){ui.screen='stats';ui.msg='';ui.exportText='';ui.editUser=null;}
+  else if(a==='go-modes'){ui.screen='modes';}
+  else if(a==='pick-mode'){ui.cfg.mode=v;if(v==='killer'&&ui.cfg.players<2)ui.cfg.players=2;saveSetup();ui.screen='setup';}
+  else if(a==='go-settings'){ui.screen='settings';ui.msg='';}
+  else if(a==='go-account'){ui.screen='account';ACC.err='';ACC.msg='';}
+  else if(a==='go-profiles'){ui.screen='profiles';PROF.open=null;PROF.err='';if(cloudOn()&&PROF.list===null) profLoadList();}
+  else if(a==='prof-open'){profOpen(v);return;}
+  else if(a==='prof-back'){PROF.open=null;ui.fv=null;ui.chartUser=null;}
+  else if(a==='prof-refresh'){PROF.list=null;PROF.data={};PROF.open=null;profLoadList();return;}
+  else if(a==='acc-tab'){ACC.tab=v;ACC.err='';ACC.msg='';ACC.pin='';ACC.pin2='';}
+  else if(a==='acc-login'){accEnter('login');return;}
+  else if(a==='acc-register'){accEnter('register');return;}
+  else if(a==='acc-logout'){accLogout();return;}
+  else if(a==='acc-pub'){accSetPublic(v==='1');return;}
+  else if(a==='acc-pin'){accChangePin();return;}
+  else if(a==='acc-sync'){(async()=>{ACC.busy=true;ACC.err='';ACC.msg='';render();try{await accSync();const u=accLocalUser();if(u) await cloudPush(u);ACC.msg='Statistik ist abgeglichen.';}catch(e){ACC.err=e.message;}ACC.busy=false;render();})();return;}
+  else if(a==='cfg-save'){
+    const u=String(ACC.cfgUrl||'').trim().replace(/\/+$/,''),k=String(ACC.cfgKey||'').trim();
+    if(!/^https:\/\/[^\s]+$/.test(u)||k.length<20){ACC.err='Bitte die Projekt-Adresse (beginnt mit https://) und den langen öffentlichen Schlüssel eintragen.';}
+    else{try{localStorage.setItem('dart-cloud',JSON.stringify({url:u,key:k}));}catch(e){}cloudLoadCfg();ACC.err='';ACC.msg='Server verbunden. Jetzt kannst du ein Konto anlegen.';}
+  }
+  else if(a==='cfg-clear'){try{localStorage.removeItem('dart-cloud');}catch(e){}CLOUD.url='';CLOUD.key='';try{const w=window.DART_CLOUD;if(w){CLOUD.url=w.url||'';CLOUD.key=w.key||'';}}catch(e){}ACC.msg='';}
+  else if(a==='theme'){ui.cfg.theme=themeOf(v);saveSetup();}
+  else if(a==='vreset'){ui.cfg.callVoice='';ui.cfg.callRate=1;ui.cfg.callPitch=1;saveSetup();}
+  else if(a==='back'||a==='go-home'){ui.screen='home';ui.editUser=null;ui.fv=null;}
   else if(a==='editfav'){ui.editUser=ui.editUser===v?null:v;ui.favErr='';ui.favScore='';ui.favRoute='';}
   else if(a==='favd'){
     const u=findUser(ui.editUser);
@@ -2263,7 +2706,7 @@ root.addEventListener('click',e=>{
   else if(a==='nextleg'){nextLeg();}
   else if(a==='menu'){ui.askMenu=true;}
   else if(a==='menu-no'){ui.askMenu=false;}
-  else if(a==='menu-yes'){ui.askMenu=false;ui.fv=null;ui.screen='setup';speakCancel();micStop();camStop();netClose();G=null;HIST=[];committed=null;}
+  else if(a==='menu-yes'){ui.askMenu=false;ui.fv=null;ui.screen='home';speakCancel();micStop();camStop();netClose();G=null;HIST=[];committed=null;}
   else if(a==='rematch'){ui.fv=null;ui.cfg.starter=(G.cfg.starter||0)+1;newGame(ui.cfg);}
   render();
 });
@@ -2275,17 +2718,22 @@ root.addEventListener('input',e=>{
   else if(d.joinname!==undefined){ui.join.name=e.target.value;}
   else if(d.favscore!==undefined){ui.favScore=e.target.value;}
   else if(d.favroute!==undefined){ui.favRoute=e.target.value;}
+  else if(d.acc!==undefined){ACC[d.acc]=d.acc==='pin'||d.acc==='pin2'||d.acc==='oldpin'?e.target.value.replace(/\D/g,'').slice(0,6):e.target.value;}
 });
 root.addEventListener('keydown',e=>{
   const d=e.target.dataset||{};
   if(e.key!=='Enter') return;
   if(d.newname!==undefined&&ui.newSlot!==null){e.preventDefault();doCreate(ui.newSlot);render();}
   else if(d.favscore!==undefined||d.favroute!==undefined){e.preventDefault();addFavRoute();render();}
+  else if(d.acc!==undefined&&ui.screen==='account'){e.preventDefault();if(ACC.token) accChangePin(); else accEnter(ACC.tab==='register'?'register':'login');}
 });
 root.addEventListener('change',e=>{
   const d=e.target.dataset||{};
   if(d.joinuid!==undefined){const u=findUser(e.target.value);ui.join.uid=u?u.id:'';if(u) ui.join.name=u.name;render();return;}
   if(d.opt){ui.cfg[d.opt]=e.target.checked;saveSetup();}
+  else if(d.callvoice!==undefined){ui.cfg.callVoice=e.target.value;saveSetup();}
+  else if(d.callrate!==undefined){ui.cfg.callRate=+e.target.value||1;saveSetup();}
+  else if(d.callpitch!==undefined){ui.cfg.callPitch=+e.target.value||1;saveSetup();}
   else if(d.botlvl!==undefined){ui.cfg.slots[+d.botlvl].bot=+e.target.value;saveSetup();}
   else if(d.hc!==undefined){
     const sl=ui.cfg.slots[+d.i];sl.hc=sl.hc||cleanHc(null);

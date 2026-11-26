@@ -1,7 +1,7 @@
 /* Service Worker: legt die App im Cache ab, damit sie ohne Internet startet.
    Beim Ändern der App die Version erhöhen (v1 -> v2), dann laden die Geräte die neue Datei. */
-const CACHE='dart-v3';
-const CORE=['./','index.html','manifest.webmanifest','icon-192.png','icon-512.png'];
+const CACHE='dart-v6';
+const CORE=['./','index.html','config.js','manifest.webmanifest','icon-192.png','icon-512.png'];
 self.addEventListener('install',e=>{
   e.waitUntil(caches.open(CACHE).then(c=>Promise.all(CORE.map(u=>c.add(u).catch(()=>{})))).then(()=>self.skipWaiting()));
 });

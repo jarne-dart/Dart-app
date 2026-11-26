@@ -1,0 +1,12 @@
+Hier gehört das Sprachmodell für die Offline-Spracherkennung hin.
+
+Die App erwartet das Modell als .tar.gz-Datei mit genau diesem Namen:
+
+    vosk-model-small-de-0.15.tar.gz     (Deutsch, ca. 45 MB)
+
+So bekommst du die Datei:
+1. https://alphacephei.com/vosk/models/vosk-model-small-de-0.15.zip herunterladen und entpacken.
+2. Im Ordner, der den Ordner "vosk-model-small-de-0.15" enthält, eine Eingabeaufforderung öffnen
+   (in die Adressleiste des Explorers "cmd" tippen) und eingeben:
+       tar -czf vosk-model-small-de-0.15.tar.gz vosk-model-small-de-0.15
+3. Die entstandene Datei in diesen Ordner (models) legen und mit GitHub Desktop hochladen.
