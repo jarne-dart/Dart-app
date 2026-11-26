@@ -114,6 +114,7 @@ textarea{min-height:90px;font-size:12px;font-family:ui-monospace,Menlo,monospace
 .route.fav::before{content:"★ "}
 .noroute{font-size:12px;color:var(--muted)}
 .lastline{height:16px;line-height:16px;font-size:12px;color:var(--muted);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lastline.err{height:auto;min-height:16px;max-height:58px;white-space:normal;line-height:14px;overflow:auto;text-overflow:clip;word-break:break-word}
 .bar{display:flex;justify-content:space-between;align-items:center;gap:6px;height:34px}
 .seg{display:flex;gap:4px}
 .seg button{background:var(--panel);border:1.5px solid var(--line);border-radius:9px;padding:6px 10px;font-size:13px;font-weight:600}
@@ -905,7 +906,7 @@ const OFFV={state:'off',err:'',model:null,lang:'',rec:null,ctx:null,stream:null,
 /* Live-Anzeige zur Fehlersuche: Pegel, Zwischenergebnis, Anzahl Ergebnisse (nur wenn gerade nichts anderes angezeigt wird) */
 function offDbg(){
   const now=Date.now();if(now-OFFV.lastUi<400) return;OFFV.lastUi=now;
-  if(!OFFV.rec||ui.screen!=='game'||(ui.heard&&now-ui.heard.t<4000)) return;
+  if(!OFFV.rec||REC.err||ui.screen!=='game'||(ui.heard&&now-ui.heard.t<4000)) return;
   const el=document.querySelector('.lastline');if(!el) return;
   const n=Math.min(8,Math.round(OFFV.lvl*40)),bar='▮'.repeat(n)+'▯'.repeat(8-n);
   el.textContent='🎤 '+(OFFV.paused?'pausiert ':bar+' ')+(OFFV.part?'„'+OFFV.part+'“ ':'')+'· '+OFFV.nres+' Ergebnisse';
@@ -969,7 +970,7 @@ async function offStart(){
     if(!REC.on){st.getTracks().forEach(t=>t.stop());return;}
     const AC=window.AudioContext||window.webkitAudioContext,ctx=new AC();
     if(ctx.state==='suspended'){try{await ctx.resume();}catch(e){}}
-    const src=ctx.createMediaStreamSource(st),node=ctx.createScriptProcessor(4096,1,1),rec=new OFFV.model.KaldiRecognizer();
+    const src=ctx.createMediaStreamSource(st),node=ctx.createScriptProcessor(4096,1,1),rec=new OFFV.model.KaldiRecognizer(ctx.sampleRate);
     rec.on('result',m=>{OFFV.nres++;OFFV.part='';const t=m&&m.result&&m.result.text;if(t&&!OFFV.paused) handleSpeech([t]);});
     rec.on('partialresult',m=>{OFFV.part=(m&&m.result&&m.result.partial)||'';offDbg();});
     rec.on('error',m=>{REC.err='Erkennungsfehler: '+String(m&&m.error||m);render();});
@@ -2111,7 +2112,7 @@ function renderGame(){
   root.innerHTML=`<div class="game">
     <div class="gtop"><div class="t"><b>${g.online?'🌐 ':''}${MODE_NAMES[c.mode]}</b>${esc(sub)}</div><div class="hb">${(SRC&&c.voice!=='offline')||(c.voice==='offline'&&offAvail())?`<button class="small ic ${REC.on?'live':''}" data-act="mic" aria-label="Spracheingabe">🎤</button>`:''}${c.caller?`<button class="small ic" data-act="mute" aria-label="Ansage an/aus">${SPK.muted?'🔇':'🔊'}</button>`:''}<button class="small" data-act="menu">Menü</button></div></div>
     ${top}
-    <div class="strip"><div class="slots">${slots}</div><div class="msg ${cls}">${msg}</div>${routes}<div class="lastline">${ui.heard&&Date.now()-ui.heard.t<4000?esc('🎤 „'+ui.heard.text+'“'+(ui.heard.ok?'':' – nicht erkannt')):esc(NET.err||REC.err||g.lastText||'')}</div></div>
+    <div class="strip"><div class="slots">${slots}</div><div class="msg ${cls}">${msg}</div>${routes}<div class="lastline${(!(ui.heard&&Date.now()-ui.heard.t<4000)&&(NET.err||REC.err))?' err':''}">${ui.heard&&Date.now()-ui.heard.t<4000?esc('🎤 „'+ui.heard.text+'“'+(ui.heard.ok?'':' – nicht erkannt')):esc(NET.err||REC.err||g.lastText||'')}</div></div>
     <div class="bar"><div class="seg"><button class="${ui.input==='board'?'on':''}" data-act="input" data-v="board">Board</button><button class="${ui.input==='keys'?'on':''}" data-act="input" data-v="keys">Tasten</button><button class="${ui.input==='cam'?'on':''} ${CAM.state==='ready'?'rdy':''}" data-act="input" data-v="cam" aria-label="Kamera">📷</button></div>
       <div class="acts">${right}</div></div>
     <div class="input ${inputOff?'off':''}">${inputBody}</div>
