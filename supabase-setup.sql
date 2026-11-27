@@ -265,7 +265,8 @@ alter table public.dart100_runs enable row level security;
 revoke all on public.dart100_runs from anon, authenticated;
 
 -- ---------- The 100: Hilfsfunktionen (nicht von außen aufrufbar) ----------
--- Zeitfenster: jeden Tag 20:00 bis 21:00 Uhr (deutsche Zeit)
+-- Zeitfenster: Starten kann man jeden Tag zwischen 12:00 und 23:59 Uhr (deutsche Zeit).
+-- Ab dem Start hat jeder Spieler genau eine Stunde am Stück (siehe dart100_start / dart100_submit).
 create or replace function public.dart100_now() returns timestamptz
 language sql stable as $$ select now() $$;
 
@@ -273,10 +274,14 @@ create or replace function public.dart100_today() returns date
 language sql stable as $$ select (public.dart100_now() at time zone 'Europe/Berlin')::date $$;
 
 create or replace function public.dart100_opens(p_day date) returns timestamptz
-language sql immutable as $$ select ((p_day + time '20:00') at time zone 'Europe/Berlin') $$;
+language sql immutable as $$ select ((p_day + time '12:00') at time zone 'Europe/Berlin') $$;
 
 create or replace function public.dart100_closes(p_day date) returns timestamptz
-language sql immutable as $$ select ((p_day + time '21:00') at time zone 'Europe/Berlin') $$;
+language sql immutable as $$ select (((p_day + 1) + time '00:00') at time zone 'Europe/Berlin') $$;
+
+-- Ab hier ist der Tag endgültig gewertet (letzter Start 23:59 + eine Stunde)
+create or replace function public.dart100_final(p_day date) returns timestamptz
+language sql immutable as $$ select public.dart100_closes(p_day) + interval '1 hour' $$;
 
 -- Spielart des Tages: Finish-Folge, Score-Jagd, Doppel-Training im Wechsel
 create or replace function public.dart100_kind(p_day date) returns text
@@ -332,11 +337,11 @@ language sql stable as $$
   from (select x.day, x.player_id,
                row_number() over (partition by x.day order by x.score desc, x.darts asc, x.secs asc, x.submitted_at asc) as rk
         from public.dart100_runs x
-        where x.submitted_at is not null and public.dart100_closes(x.day) <= public.dart100_now()) r
+        where x.submitted_at is not null and public.dart100_final(x.day) <= public.dart100_now()) r
 $$;
 
 revoke all on function public.dart100_now(), public.dart100_today(), public.dart100_opens(date), public.dart100_closes(date),
-  public.dart100_kind(date), public.dart100_targets(date), public.dart100_min_darts(int), public.dart100_score_ok(int),
+  public.dart100_final(date), public.dart100_kind(date), public.dart100_targets(date), public.dart100_min_darts(int), public.dart100_score_ok(int),
   public.dart100_points_all() from public, anon, authenticated;
 
 -- ---------- The 100: Stand abrufen (Zeitfenster, Rangliste, mein Ergebnis) ----------
@@ -351,10 +356,16 @@ declare
 begin
   v_state := case when v_now < v_open then 'before' when v_now < v_close then 'open' else 'closed' end;
   if v_me is not null then
-    select * into v_run from public.dart100_runs where player_id = v_me and day = v_day;
+    select * into v_run from public.dart100_runs
+     where player_id = v_me and submitted_at is null and started_at > v_now - interval '1 hour'
+     order by started_at desc limit 1;
+    if not found then
+      select * into v_run from public.dart100_runs where player_id = v_me and day = v_day;
+    end if;
     if found then
-      v_my := jsonb_build_object('started', true, 'submitted', v_run.submitted_at is not null,
-                                 'score', v_run.score, 'darts', v_run.darts, 'secs', v_run.secs);
+      v_my := jsonb_build_object('day', v_run.day, 'started', true, 'submitted', v_run.submitted_at is not null,
+                                 'score', v_run.score, 'darts', v_run.darts, 'secs', v_run.secs,
+                                 'started_at', v_run.started_at, 'ends_at', v_run.started_at + interval '1 hour');
     else v_my := jsonb_build_object('started', false, 'submitted', false);
     end if;
   end if;
@@ -377,7 +388,7 @@ begin
     into v_month, v_mm from rk;
   return jsonb_build_object('now', v_now, 'day', v_day, 'opens', v_open, 'closes', v_close, 'state', v_state,
     'kind', public.dart100_kind(v_day), 'opens_txt', to_char(v_open at time zone 'Europe/Berlin', 'HH24:MI'),
-    'closes_txt', to_char(v_close at time zone 'Europe/Berlin', 'HH24:MI'),
+    'closes_txt', to_char((v_close - interval '1 minute') at time zone 'Europe/Berlin', 'HH24:MI'),
     'month', to_char(v_ms, 'YYYY-MM'), 'my', v_my, 'lb', v_lb, 'ranking', v_month, 'my_month', v_mm);
 end $$;
 
@@ -388,20 +399,26 @@ declare v_me uuid := public.dart_player_from_token(p_token); v_now timestamptz :
         v_day date := public.dart100_today(); v_run public.dart100_runs%rowtype;
 begin
   if v_me is null then return jsonb_build_object('error','no_session'); end if;
+  -- laufender Versuch (auch über Mitternacht hinweg)? Dann einfach fortsetzen
+  select * into v_run from public.dart100_runs
+   where player_id = v_me and submitted_at is null and started_at > v_now - interval '1 hour'
+   order by started_at desc limit 1;
+  if found then
+    return jsonb_build_object('ok', true, 'resume', true, 'day', v_run.day, 'kind', v_run.kind, 'targets', v_run.targets,
+                              'now', v_now, 'started_at', v_run.started_at, 'ends_at', v_run.started_at + interval '1 hour');
+  end if;
   select * into v_run from public.dart100_runs where player_id = v_me and day = v_day;
   if found then
     if v_run.submitted_at is not null then return jsonb_build_object('error','already_done'); end if;
-    if v_now > v_run.started_at + interval '20 minutes' then return jsonb_build_object('error','expired'); end if;
-    return jsonb_build_object('ok', true, 'resume', true, 'kind', v_run.kind, 'targets', v_run.targets,
-                              'now', v_now, 'started_at', v_run.started_at);
+    return jsonb_build_object('error','expired');
   end if;
   if v_now < public.dart100_opens(v_day) then return jsonb_build_object('error','too_early'); end if;
   if v_now >= public.dart100_closes(v_day) then return jsonb_build_object('error','closed'); end if;
   insert into public.dart100_runs (player_id, day, kind, targets, started_at)
     values (v_me, v_day, public.dart100_kind(v_day), public.dart100_targets(v_day), v_now)
     returning * into v_run;
-  return jsonb_build_object('ok', true, 'resume', false, 'kind', v_run.kind, 'targets', v_run.targets,
-                            'now', v_now, 'started_at', v_run.started_at);
+  return jsonb_build_object('ok', true, 'resume', false, 'day', v_run.day, 'kind', v_run.kind, 'targets', v_run.targets,
+                            'now', v_now, 'started_at', v_run.started_at, 'ends_at', v_run.started_at + interval '1 hour');
 end $$;
 
 -- ---------- The 100: Ergebnis abgeben (wird auf Plausibilität geprüft) ----------
@@ -412,10 +429,14 @@ declare v_me uuid := public.dart_player_from_token(p_token); v_now timestamptz :
         v_run public.dart100_runs%rowtype; i int; e jsonb; t int; d int; v_score int := 0; v_darts int := 0; v_secs int;
 begin
   if v_me is null then return jsonb_build_object('error','no_session'); end if;
-  select * into v_run from public.dart100_runs where player_id = v_me and day = public.dart100_today() for update;
-  if not found then return jsonb_build_object('error','no_run'); end if;
-  if v_run.submitted_at is not null then return jsonb_build_object('error','already_done'); end if;
-  if v_now > v_run.started_at + interval '20 minutes' then return jsonb_build_object('error','expired'); end if;
+  select * into v_run from public.dart100_runs
+   where player_id = v_me and submitted_at is null order by started_at desc limit 1 for update;
+  if not found then
+    if exists (select 1 from public.dart100_runs where player_id = v_me and day = public.dart100_today()) then
+      return jsonb_build_object('error','already_done'); end if;
+    return jsonb_build_object('error','no_run');
+  end if;
+  if v_now > v_run.started_at + interval '1 hour' then return jsonb_build_object('error','expired'); end if;
   if jsonb_typeof(p_result) <> 'array' or jsonb_array_length(p_result) <> 10 then return jsonb_build_object('error','bad_result'); end if;
   for i in 0..9 loop
     e := p_result -> i;

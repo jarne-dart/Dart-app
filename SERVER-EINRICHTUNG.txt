@@ -68,8 +68,9 @@ Wenn dein Server schon läuft, musst du nur einmal das neue Skript einspielen:
 Ohne dieses Update funktionieren Konten wie bisher, aber "The 100" und die
 Synchronisierung des Charakters sind nicht verfügbar.
 
-"The 100" läuft jeden Tag von 20:00 bis 21:00 Uhr (deutsche Zeit). Die Zeiten stehen
-im Skript in den Funktionen dart100_opens und dart100_closes und können dort geändert werden.
+"The 100": Starten kann man jeden Tag zwischen 12:00 und 23:59 Uhr (deutsche Zeit). Ab dem
+Start hat man eine Stunde am Stück. Die Zeiten stehen im Skript in den Funktionen
+dart100_opens und dart100_closes und können dort geändert werden.
 
 
 WAS PASSIERT MIT MEINEN DATEN?

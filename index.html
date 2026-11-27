@@ -2492,7 +2492,7 @@ const h100Now=()=>Date.now()+H100.off;
 const h100Min=s=>[1,2,3].find(l=>checkout(s,l,null,false))||3;
 function h100Fmt(ms){ms=Math.max(0,Math.floor(ms/1000));const h=Math.floor(ms/3600),m=Math.floor(ms%3600/60),s=ms%60;return (h?h+':':'')+String(m).padStart(h?2:1,'0')+':'+String(s).padStart(2,'0');}
 const h100Res=(kind,x)=>kind==='score'?`${x.score} Punkte`:`${x.score}/10 · ${x.darts} Darts`;
-function h100Save(){try{if(H100.run) localStorage.setItem('dart-h100run',JSON.stringify({day:H100.st&&H100.st.day,res:H100.run.res}));else localStorage.removeItem('dart-h100run');}catch(e){}}
+function h100Save(){try{if(H100.run) localStorage.setItem('dart-h100run',JSON.stringify({day:H100.run.day,res:H100.run.res}));else localStorage.removeItem('dart-h100run');}catch(e){}}
 async function h100Load(){
   if(!cloudOn()||H100.busy) return;
   try{
@@ -2518,8 +2518,8 @@ async function h100Start(){
   try{
     const r=await rpc('dart100_start',{p_token:ACC.token});
     let res=[];
-    try{const s=JSON.parse(localStorage.getItem('dart-h100run')||'null');if(r.resume&&s&&H100.st&&s.day===H100.st.day&&Array.isArray(s.res)) res=s.res.slice(0,10);}catch(e){}
-    H100.run={kind:r.kind,targets:r.targets,res,val:'',err:''};
+    try{const s=JSON.parse(localStorage.getItem('dart-h100run')||'null');if(r.resume&&s&&s.day===r.day&&Array.isArray(s.res)) res=s.res.slice(0,10);}catch(e){}
+    H100.run={kind:r.kind,targets:r.targets,res,val:'',err:'',day:r.day,endsAt:Date.parse(r.ends_at)-(Date.parse(r.now)-Date.now())};
     h100Save();
   }catch(e){H100.err=e.message;}
   H100.busy=false;render();
@@ -2545,7 +2545,8 @@ async function h100Submit(){
 function h100Tick(){
   if(H100.tm||typeof setInterval!=='function') return;
   H100.tm=setInterval(()=>{
-    if(ui.screen!=='h100'||H100.run||H100.busy||!H100.st) return;
+    if(ui.screen==='h100'&&H100.run){const el=document.querySelector('[data-h1left]');if(el) el.textContent=H100.run.endsAt?h100Fmt(H100.run.endsAt-Date.now()):'';return;}
+    if(ui.screen!=='h100'||H100.busy||!H100.st) return;
     const st=H100.st,n=h100Now(),b=Date.parse(st.opens),c=Date.parse(st.closes),old=st.state;
     const ns=n<b?'before':n<c?'open':'closed';
     if(ns!==old){h100Load();return;}
@@ -2574,13 +2575,17 @@ function renderH100(){
   } else {
     const k=H100_KIND[st.kind]||['?',''],n=h100Now(),b=Date.parse(st.opens),c=Date.parse(st.closes),my=st.my||{};
     let state='',act='';
-    if(st.state==='before'){state=`<div class="h1big">${h100Fmt(b-n)}</div><div class="h1sub">bis zum Start um ${esc(st.opens_txt)} Uhr</div>`;}
-    else if(st.state==='open'){state=`<div class="h1big live">Jetzt offen</div><div class="h1sub">noch ${h100Fmt(c-n)} bis ${esc(st.closes_txt)} Uhr</div>`;}
-    else state=`<div class="h1big">Heute beendet</div><div class="h1sub">Morgen um ${esc(st.opens_txt)} Uhr geht es weiter</div>`;
+    const live=my.started&&!my.submitted&&my.ends_at&&Date.parse(my.ends_at)>n;
+    if(live) state=`<div class="h1big live">${h100Fmt(Date.parse(my.ends_at)-n)}</div><div class="h1sub">Dein Versuch läuft noch</div>`;
+    else if(st.state==='before'){state=`<div class="h1big">${h100Fmt(b-n)}</div><div class="h1sub">bis zum Start um ${esc(st.opens_txt)} Uhr</div>`;}
+    else if(st.state==='open'){state=`<div class="h1big live">Jetzt offen</div><div class="h1sub">Du kannst jederzeit bis ${esc(st.closes_txt)} Uhr starten und hast dann eine Stunde am Stück. Der Tag endet in ${h100Fmt(c-n)}.</div>`;}
+    else state=`<div class="h1big">Heute beendet</div><div class="h1sub">Morgen ab ${esc(st.opens_txt)} Uhr geht es weiter</div>`;
     if(!ACC.token) act=`<button class="primary" data-act="go-account">Anmelden zum Mitspielen</button>`;
     else if(my.submitted) act=`<div class="gain">Dein Ergebnis heute: <b>${h100Res(st.kind,my)}</b>${st.kind==='score'?'':` · ${h100Fmt(my.secs*1000)}`}. Pro Tag ist nur ein Versuch möglich.</div>`;
-    else if(st.state==='open') act=`<button class="primary" data-act="h100-start" ${H100.busy?'disabled':''}>${my.started?'Versuch fortsetzen':'Jetzt teilnehmen'}</button><div class="note" style="text-align:left">Nach dem Start hast du 20 Minuten und nur diesen einen Versuch.</div>`;
-    else if(st.state==='before') act=`<div class="note" style="text-align:left">Teilnehmen kannst du ab ${esc(st.opens_txt)} Uhr.</div>`;
+    else if(live) act=`<button class="primary" data-act="h100-start" ${H100.busy?'disabled':''}>Versuch fortsetzen</button>`;
+    else if(my.started) act=`<div class="err">Dein Versuch heute ist abgelaufen (eine Stunde am Stück). Morgen kannst du es wieder versuchen.</div>`;
+    else if(st.state==='open') act=`<button class="primary" data-act="h100-start" ${H100.busy?'disabled':''}>Jetzt starten</button><div class="note" style="text-align:left">Mit dem Start läuft deine Stunde. Du hast nur diesen einen Versuch pro Tag.</div>`;
+    else if(st.state==='before') act=`<div class="note" style="text-align:left">Starten kannst du ab ${esc(st.opens_txt)} Uhr.</div>`;
     body=`${H100.rew?`<div class="gain">${esc(H100.rew)}</div>`:''}
       <div class="h1card"><div class="h1name">${esc(k[0])}</div><div class="h1desc">${esc(k[1])}</div>${state}</div>
       ${H100.res?`<div class="gain">Ergebnis abgegeben: <b>${h100Res(H100.res.kind,H100.res)}</b>. Dazu gibt es ${BP_H100} Battle-Pass-Punkte.</div>`:''}
@@ -2588,7 +2593,7 @@ function renderH100(){
       <div class="chips" style="margin:16px 0 8px"><button class="chip ${H100.tab==='day'?'on':''}" data-act="h100-tab" data-v="day">Heute</button><button class="chip ${H100.tab==='month'?'on':''}" data-act="h100-tab" data-v="month">Monatswertung</button><button class="chip sm" data-act="h100-reload" aria-label="Aktualisieren">↻</button></div>
       ${h100Board(st)}
       <h2>So funktioniert es</h2>
-      <div class="rules">Jeden Tag gibt es eine Aufgabe, die für alle gleich ist. Sie läuft eine Stunde (${esc(st.opens_txt)} bis ${esc(st.closes_txt)} Uhr). Wer am Tag am besten ist, bekommt 100 Punkte, der Zweite 99, der Dritte 98 und so weiter. Die Tagespunkte zählen für die Monatswertung. Wer am Monatsende vorne liegt, bekommt Belohnungen für den Charakter: Platz 1 den Lorbeerkranz und die Goldene 100, Platz 1 bis 3 die Siegermedaille. Der Server prüft jedes Ergebnis auf Plausibilität.</div>`;
+      <div class="rules">Jeden Tag gibt es eine Aufgabe, die für alle gleich ist. Du kannst jeden Tag zwischen ${esc(st.opens_txt)} und ${esc(st.closes_txt)} Uhr starten, wann du willst. Ab dem Start hast du eine Stunde am Stück Zeit. Wer am Tag am besten ist, bekommt 100 Punkte, der Zweite 99, der Dritte 98 und so weiter. Die Tagespunkte zählen für die Monatswertung. Wer am Monatsende vorne liegt, bekommt Belohnungen für den Charakter: Platz 1 den Lorbeerkranz und die Goldene 100, Platz 1 bis 3 die Siegermedaille. Der Server prüft jedes Ergebnis auf Plausibilität.</div>`;
   }
   root.innerHTML=`<div class="wrap">${hdr('The 100')}${body}</div>`;
 }
@@ -2608,12 +2613,12 @@ function renderH100Play(){
   }
   const done=n>=10;
   root.innerHTML=`<div class="wrap">${hdr('The 100','h100-leave')}
-    <div class="bpbar"><div class="bpl"><b>${esc(H100_KIND[kind][0])}</b><span>${Math.min(n,10)} / 10</span></div><div class="bpt"><i style="width:${Math.min(100,n*10)}%"></i></div></div>
+    <div class="bpbar"><div class="bpl"><b>${esc(H100_KIND[kind][0])}</b><span>${Math.min(n,10)} / 10 · noch <b data-h1left>${run.endsAt?h100Fmt(run.endsAt-Date.now()):''}</b></span></div><div class="bpt"><i style="width:${Math.min(100,n*10)}%"></i></div></div>
     <div class="h1card" style="margin-top:12px">${done?`<div class="h1big">${H100.busy?'Wird abgegeben …':'Fertig'}</div>`:main}
       ${run.err?`<div class="err" style="margin-top:10px">${esc(run.err)}</div>${run.fatal?`<button class="ghost" data-act="h100-leave" style="margin-top:8px">Zurück</button>`:done?`<button class="primary" data-act="h100-send">Erneut senden</button>`:''}`:''}
     </div>
     ${!done&&n>0&&!H100.busy?`<button class="ghost" data-act="h100-undo" style="margin-top:10px">Letzte Eingabe zurücknehmen</button>`:''}
-    <div class="note" style="text-align:left">Der Versuch läuft ab dem Start 20 Minuten. Du kannst die App zwischendurch verlassen und mit „Versuch fortsetzen“ weitermachen.</div></div>`;
+    <div class="note" style="text-align:left">Dein Versuch dauert ab dem Start eine Stunde am Stück. Du kannst die App zwischendurch verlassen und mit „Versuch fortsetzen“ weitermachen, die Zeit läuft aber weiter.</div></div>`;
 }
 
 function renderHome(){
