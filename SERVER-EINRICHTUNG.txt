@@ -9,29 +9,37 @@ nicht benutzt wurden. Das Projekt lässt sich im Dashboard mit einem Klick wiede
 starten, die Daten bleiben erhalten.
 
 
-SCHRITT 1: Projekt anlegen
---------------------------
+SCHRITT 1: Organisation und Projekt anlegen
+-------------------------------------------
 1. Auf https://supabase.com ein Konto anlegen (Anmeldung mit GitHub geht am schnellsten).
-2. "New project" klicken.
-3. Name: dart-scorer. Region: Frankfurt (eu-central-1) oder eine Region in deiner Nähe.
-4. Ein Datenbank-Passwort vergeben und irgendwo notieren. Die App braucht es NICHT.
-5. "Create new project" klicken und 1 bis 2 Minuten warten.
+2. Beim ersten Mal verlangt Supabase zuerst eine ORGANISATION ("New organization"):
+   Name beliebig (z. B. dein Name), Type: Personal, Plan: Free, dann "Create organization".
+3. Danach "New project" klicken.
+4. Name: dart-scorer. Region: Frankfurt (eu-central-1) oder eine Region in deiner Nähe.
+5. Ein Datenbank-Passwort vergeben und irgendwo notieren. Die App braucht es NICHT.
+6. "Create new project" klicken und 1 bis 2 Minuten warten.
 
 SCHRITT 2: Datenbank vorbereiten
 --------------------------------
-1. Links im Menü "SQL Editor" öffnen, dann "New query".
-2. Die Datei supabase-setup.sql in einem Texteditor öffnen, ALLES kopieren und
-   in das Fenster einfügen.
+1. Links im Menü "SQL Editor" öffnen. Dort oben links auf "+" (oder "New snippet")
+   klicken und "Create a new snippet" wählen. Es öffnet sich ein leeres Eingabefenster.
+   (Je nach Version steht dort statt "New query" auch "New snippet".)
+2. Die Datei supabase-setup.sql in einem Texteditor öffnen (Windows: Rechtsklick,
+   "Weitere Optionen anzeigen", "Öffnen mit", Editor/Notepad), ALLES kopieren
+   (Strg+A, Strg+C) und in das Fenster einfügen.
 3. Auf "Run" klicken. Es muss "Success" erscheinen (ohne rote Fehlermeldung).
    Das Skript darf bei Bedarf mehrfach ausgeführt werden.
 
 SCHRITT 3: Zugangsdaten holen
 -----------------------------
-1. Links unten auf "Project Settings" (Zahnrad) klicken, dann "API Keys"
-   (je nach Version auch "API").
-2. "Project URL" kopieren, z. B. https://abcdefgh.supabase.co
-3. Den "Publishable key" kopieren (beginnt mit sb_publishable_). Bei älteren Projekten
-   heißt der passende Schlüssel "anon public" und beginnt mit eyJ. Auch der funktioniert.
+1. Die Project URL steht je nach Version an einer dieser Stellen:
+   - Project Settings (Zahnrad) -> "Data API" -> "Project URL"
+   - oben im Projekt auf "Connect" klicken
+   - Die "Project ID" (Project Settings -> General) ist NUR der Teil vor ".supabase.co".
+     Die URL ist dann https://<Project-ID>.supabase.co
+2. Den Schlüssel findest du unter Project Settings -> "API Keys". Kopiere den
+   "Publishable key" (beginnt mit sb_publishable_). Bei älteren Projekten heißt der
+   passende Schlüssel "anon public" und beginnt mit eyJ. Auch der funktioniert.
    NIEMALS den "secret" oder "service_role" Schlüssel verwenden!
 
 SCHRITT 4: In die App eintragen (eine der beiden Möglichkeiten)
@@ -46,7 +54,7 @@ SCHRITT 5: Konto anlegen
 ------------------------
 In der App oben rechts auf "Anmelden" tippen, "Neues Konto" wählen, Name und eine
 PIN aus 6 Ziffern eingeben. Danach werden deine Statistiken automatisch hochgeladen.
-Unter "Konto" kannst du dein Profil öffentlich machen. Alle öffentlichen Profile
+Unter "Konto" kannst du dein Profil öffentlich machen. (Charakter und Battle Pass werden vorerst nur auf dem Gerät gespeichert.) Alle öffentlichen Profile
 siehst du auf dem Startbildschirm unter "Profile".
 
 
