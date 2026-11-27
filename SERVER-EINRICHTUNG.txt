@@ -58,6 +58,20 @@ Unter "Konto" kannst du dein Profil öffentlich machen. (Charakter und Battle Pa
 siehst du auf dem Startbildschirm unter "Profile".
 
 
+UPDATE FÜR BESTEHENDE SERVER (Charakter, Battle Pass und "The 100")
+-------------------------------------------------------------------
+Wenn dein Server schon läuft, musst du nur einmal das neue Skript einspielen:
+1. Supabase -> SQL Editor -> "+" / "New snippet".
+2. Die neue Datei supabase-setup.sql komplett kopieren und einfügen (sie enthält
+   auch den alten Teil, das ist in Ordnung).
+3. "Run" klicken. Es muss "Success" erscheinen. Deine Konten und Statistiken bleiben erhalten.
+Ohne dieses Update funktionieren Konten wie bisher, aber "The 100" und die
+Synchronisierung des Charakters sind nicht verfügbar.
+
+"The 100" läuft jeden Tag von 20:00 bis 21:00 Uhr (deutsche Zeit). Die Zeiten stehen
+im Skript in den Funktionen dart100_opens und dart100_closes und können dort geändert werden.
+
+
 WAS PASSIERT MIT MEINEN DATEN?
 ------------------------------
 - Die PIN wird nur als verschlüsselter Hash gespeichert, nie im Klartext.
