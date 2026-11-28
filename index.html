@@ -319,6 +319,36 @@ canvas.av{width:26px;height:26px;border-radius:50%;background:var(--panel2);flex
 .h1sub{color:var(--muted);font-size:13px;margin-top:4px}
 table.lb{width:100%;border-collapse:collapse;font-size:14px}table.lb th{color:var(--muted);font-size:12px;text-align:left;padding:4px}
 table.lb td{padding:7px 4px;border-top:1px solid var(--line)}table.lb tr.me td{color:var(--accent);font-weight:700}table.lb small{color:var(--muted)}
+.slot.tap{cursor:pointer}.slot.edit{outline:2px solid var(--accent);outline-offset:-2px}
+.coins{margin-left:auto;font-weight:800;color:#f0b429}
+.bpl{display:flex;align-items:baseline;gap:10px}
+.rar{box-shadow:inset 0 -3px 0 var(--rc)}
+.rtag{display:inline-block;font-size:11px;font-weight:700;padding:1px 7px;border-radius:999px;border:1px solid var(--rc);color:var(--rc)}
+.bpscroll{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 12px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+.bpc{flex:0 0 118px;scroll-snap-align:center;background:var(--panel);border:1px solid var(--line);border-top:5px solid var(--rc);border-radius:12px;padding:9px 9px 10px;display:flex;flex-direction:column;gap:4px;min-height:152px}
+.bpc.got{border-color:var(--good);border-top-color:var(--rc)}
+.bpc.now{box-shadow:0 0 0 2px var(--accent)}
+.bpcn{font-size:12px;color:var(--muted);font-weight:700}
+.bpci{font-weight:700;font-size:14px;line-height:1.2}
+.bpcs{font-size:11px;color:var(--muted)}
+.bpcc{font-size:13px;font-weight:800;color:#f0b429;margin-top:auto}
+.bpck{font-size:12px;color:var(--muted);font-weight:600}.bpc.got .bpck{color:var(--good)}
+.shopgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.shopc{background:var(--panel);border:1px solid var(--line);border-bottom:4px solid var(--rc);border-radius:14px;padding:8px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+.shopf{background:rgba(127,127,127,.12);border-radius:10px;width:100%;display:flex;justify-content:center}
+.shopn{font-weight:700;font-size:14px}.shops{font-size:11px;color:var(--muted)}
+.shopb{width:100%;border-radius:10px;border:1px solid var(--line);background:var(--accent);color:#fff;padding:8px;font-weight:800;font-size:15px}
+.shopb.no{background:transparent;color:var(--muted)}.shopb.own{background:transparent;color:var(--good);font-weight:700;font-size:13px;text-align:center;border:0}
+.adv{margin-top:14px}.adv summary{cursor:pointer;color:var(--muted);font-weight:600;padding:6px 0}
+.accsw{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.accsw button{display:flex;flex-direction:column;gap:2px;align-items:flex-start;text-align:left;background:var(--panel);border:2px solid var(--line);border-radius:14px;padding:12px 14px}
+.accsw button.on{border-color:var(--accent)}.accsw small{color:var(--muted)}
+.steps{margin:0 0 12px;padding-left:20px;color:var(--muted);line-height:1.5;font-size:14px}
+.tile.wide{grid-column:1/-1}.pavs{display:flex;gap:4px;margin-top:6px}.pavs canvas{border-radius:50%}
+.prow{align-items:center;flex-wrap:nowrap;gap:12px}.pav canvas{border-radius:50%;display:block}.pm{display:flex;flex-direction:column;flex:1;min-width:0}
+.pq{width:100%;margin-bottom:10px}
+.pillrow{display:flex;gap:4px;flex-wrap:wrap}.admbtns{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.ucard.sus{border-color:#e5484d}
 </style>
 </head>
 <body>
@@ -485,7 +515,7 @@ function normFav(f){
 /* ================= Figur & Battle Pass (Daten) ================= */
 const HAIR_COLS=['#1b1b1b','#4a2e1a','#7b4a22','#b5772f','#d9b45a','#e8d8a0','#b8321f','#d9568c','#6a3fb5','#2f6fd1','#2e9d6b','#9a9a9a'];
 const SKIN_COLS=['#ffe0c8','#f3c9a5','#e0ac86','#c68863','#a46a47','#7a4a2e','#5a3420','#3e2415'];
-const SHIRT_COL={blue:'#2f6fd1',red:'#d33b3b',green:'#2e9d57',orange:'#e8872b',black:'#26262b',purple:'#7a4fc9',white:'#eeeeee',gold:'#e0b53a'};
+const SHIRT_COL={blue:'#2f6fd1',red:'#d33b3b',green:'#2e9d57',orange:'#e8872b',black:'#26262b',purple:'#7a4fc9',white:'#eeeeee',gold:'#e0b53a',pink:'#e86aa8',teal:'#1fb5b0',yellow:'#f2cf2e',checks:'#c0392b',rainbow:'#e8872b'};
 const SLOTS=[['hair','Frisur'],['hat','Kopfbedeckung'],['glasses','Brille'],['shirt','Trikot'],['extra','Extras'],['hand','In der Hand']];
 /* frei: Grundausstattung; alles andere kommt aus dem Battle Pass */
 const BASE_ITEMS=[
@@ -506,15 +536,35 @@ const BP_ITEMS=[
   {id:'shirt:white',lvl:31,n:'Weißes Trikot'},{id:'hat:crown',lvl:32,n:'Krone'},{id:'hand:golddart',lvl:33,n:'Goldener Dart'},
   {id:'shirt:split',lvl:34,n:'Zweifarbiges Trikot'},{id:'extra:cape2',lvl:35,n:'Goldener Umhang'},{id:'hand:trophy',lvl:36,n:'Pokal'},
   {id:'shirt:gold',lvl:37,n:'Goldtrikot'},{id:'extra:chain',lvl:38,n:'Goldkette'},{id:'hat:goldcrown',lvl:39,n:'Goldene Krone'},
-  {id:'extra:halo',lvl:40,n:'Heiligenschein'}
+  {id:'extra:halo',lvl:40,n:'Heiligenschein'},
+  {id:'hat:wizard',lvl:42,n:'Zauberhut'},{id:'hair:rainbow',lvl:45,n:'Regenbogenhaare'},{id:'extra:jetpack',lvl:48,n:'Raketenrucksack'},
+  {id:'hand:diamond',lvl:52,n:'Diamant'},{id:'hair:flame',lvl:56,n:'Flammenhaare'},{id:'extra:aura',lvl:60,n:'Sternenaura'}
+];
+/* Seltenheit: 0 Gewöhnlich, 1 Selten, 2 Episch, 3 Legendär */
+const RAR=[['Gewöhnlich','#9aa3ad'],['Selten','#3b8cf0'],['Episch','#a45be8'],['Legendär','#f0b429']];
+const PRICE=[350,800,1800,4000];
+BASE_ITEMS.forEach(x=>{x.r=0;});
+BP_ITEMS.forEach(x=>{if(x.r==null) x.r=x.lvl<=10?0:x.lvl<=24?1:x.lvl<=38?2:3;});
+/* Verkauf im Shop: jeden Tag ein anderes Angebot */
+const SHOP_ITEMS=[
+  {id:'hair:pony',n:'Pferdeschwanz',r:0},{id:'hair:twin',n:'Zöpfe',r:1},{id:'hair:curly',n:'Locken',r:1},
+  {id:'hat:party',n:'Partyhut',r:0},{id:'hat:chef',n:'Kochmütze',r:0},{id:'hat:cowboy',n:'Cowboyhut',r:1},{id:'hat:propeller',n:'Propellermütze',r:1},
+  {id:'hat:bunny',n:'Hasenohren',r:1},{id:'hat:cat',n:'Katzenohren',r:1},{id:'hat:phones',n:'Kopfhörer',r:2},{id:'hat:viking',n:'Wikingerhelm',r:2},{id:'hat:unicorn',n:'Einhorn-Horn',r:3},
+  {id:'glasses:3d',n:'3D-Brille',r:0},{id:'glasses:heart',n:'Herzbrille',r:1},{id:'glasses:star',n:'Sternenbrille',r:2},
+  {id:'shirt:pink',n:'Rosa Trikot',r:0},{id:'shirt:teal',n:'Türkises Trikot',r:0},{id:'shirt:yellow',n:'Gelbes Trikot',r:0},{id:'shirt:checks',n:'Karotrikot',r:1},{id:'shirt:rainbow',n:'Regenbogentrikot',r:2},
+  {id:'extra:bowtie',n:'Fliege',r:0},{id:'extra:backpack',n:'Rucksack',r:1},{id:'extra:pearls',n:'Perlenkette',r:1},
+  {id:'hand:burger',n:'Burger',r:0},{id:'hand:pizza',n:'Pizzastück',r:0},{id:'hand:icecream',n:'Eis',r:0},{id:'hand:balloon',n:'Luftballon',r:1},{id:'hand:umbrella',n:'Regenschirm',r:1},{id:'hand:guitar',n:'Gitarre',r:2},{id:'hand:goldmic',n:'Goldenes Mikrofon',r:3}
 ];
 /* Monatsbelohnungen aus "The 100" (Platz 1 bis 3 der Monatswertung) */
-const EVENT_ITEMS=[{id:'hat:laurel',n:'Lorbeerkranz',rank:1},{id:'hand:trophy100',n:'Goldene 100',rank:1},{id:'extra:medal',n:'Siegermedaille',rank:3}];
-const ITEM_NAME={};BASE_ITEMS.concat(BP_ITEMS,EVENT_ITEMS).forEach(x=>{ITEM_NAME[x.id]=x.n;});
-const BP_MAX=40;
+const EVENT_ITEMS=[{id:'hat:laurel',n:'Lorbeerkranz',rank:1,r:3},{id:'hand:trophy100',n:'Goldene 100',rank:1,r:3},{id:'extra:medal',n:'Siegermedaille',rank:3,r:2}];
+const ITEM_NAME={},ITEM_R={};BASE_ITEMS.concat(BP_ITEMS,EVENT_ITEMS,SHOP_ITEMS).forEach(x=>{ITEM_NAME[x.id]=x.n;ITEM_R[x.id]=x.r;});
+const BP_MAX=60;
 const BP_WIN=[20,30,45,65,90],BP_LOSS=[5,8,12,18,25],BP_HUMAN=[25,10],BP_FIRST=100,BP_HUMAN_DAY=150,BP_H100=50;
 /* Punkte für Stufe n -> n+1: 100 bis Stufe 5, danach +20 pro Stufe */
-const bpCost=n=>n<=5?100:100+(n-5)*20;
+const bpCost=n=>n<=5?100:Math.min(800,100+(n-5)*20);
+/* Coins: Stufe 5, 10, 15 … geben Coins, ab Stufe 41 jede Stufe */
+const bpCoin=l=>l%5===0?100+l*4:l>40?60:0;
+const H100_COINS=80,MONTH_COINS=[0,1500,900,600];
 function bpLevel(pts){
   let l=1,rest=Math.max(0,pts|0);
   while(l<BP_MAX&&rest>=bpCost(l)){rest-=bpCost(l);l++;}
@@ -524,19 +574,51 @@ function bpLevel(pts){
 function bpUnlock(bp){
   const lv=bpLevel(bp.pts).lvl;
   BP_ITEMS.forEach(x=>{if(x.lvl<=lv&&!bp.unl.includes(x.id)) bp.unl.push(x.id);});
+  if(bp.cl==null) bp.cl=0;
+  for(let l=bp.cl+1;l<=lv;l++) bp.ce=(bp.ce||0)+bpCoin(l);
+  bp.cl=Math.max(bp.cl,lv);
 }
+const coinsOf=bp=>Math.max(0,(bp.ce||0)-(bp.cs||0));
 /* Punkte ändern; unter 0 geht es nie, bereits erhaltene Teile bleiben */
 function bpAdd(bp,d){bp.pts=Math.max(0,Math.round(bp.pts+d));bpUnlock(bp);}
 const itemOwned=(bp,id)=>BASE_ITEMS.some(x=>x.id===id)||(bp.unl||[]).includes(id)||BP_ITEMS.some(x=>x.id===id&&x.lvl<=bpLevel(bp.pts).lvl);
+/* Täglich wechselndes Angebot (gleich für alle, Wechsel um 0:00 Uhr deutscher Zeit) */
+function berlinDay(t){
+  try{return new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Berlin',year:'numeric',month:'2-digit',day:'2-digit'}).format(t==null?new Date():new Date(t));}catch(e){return dayKey();}
+}
+function seeded(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619);}return function(){h+=0x6D2B79F5;let t=h;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296;};}
+function shopToday(day){
+  day=day||berlinDay();
+  const rnd=seeded('dart-shop-'+day),used=new Set(),out=[];
+  const want=[0,0,1,1,2,rnd()<.34?3:1];
+  want.forEach(r=>{
+    const pool=SHOP_ITEMS.filter(x=>x.r===r&&!used.has(x.id));
+    if(!pool.length) return;
+    const x=pool[Math.floor(rnd()*pool.length)];used.add(x.id);out.push(x);
+  });
+  return out;
+}
+function shopBuy(u,id){
+  const x=shopToday().find(y=>y.id===id);
+  if(!x) return 'Dieses Teil ist heute nicht im Angebot.';
+  u.bp=normBp(u.bp);
+  if(itemOwned(u.bp,id)) return 'Das hast du schon.';
+  const price=PRICE[x.r];
+  if(coinsOf(u.bp)<price) return 'Dir fehlen '+(price-coinsOf(u.bp))+' Coins.';
+  u.bp.cs+=price;u.bp.unl.push(id);
+  return '';
+}
 const hexOk=c=>typeof c==='string'&&/^#[0-9a-fA-F]{6}$/.test(c);
 function normBp(b){
-  const o={pts:0,bw:[0,0,0,0,0],day:'',dp:0,unl:[]};
+  const o={pts:0,bw:[0,0,0,0,0],day:'',dp:0,unl:[],ce:0,cs:0,cl:0,mr:[]};
   if(b&&typeof b==='object'){
     if(Number.isFinite(b.pts)&&b.pts>0) o.pts=Math.min(1e7,Math.round(b.pts));
     if(Array.isArray(b.bw)) o.bw=o.bw.map((_,i)=>b.bw[i]?1:0);
     if(typeof b.day==='string') o.day=b.day.slice(0,10);
     if(Number.isFinite(b.dp)&&b.dp>0) o.dp=Math.round(b.dp);
     if(Array.isArray(b.unl)) b.unl.forEach(id=>{if(typeof id==='string'&&ITEM_NAME[id]&&!o.unl.includes(id)) o.unl.push(id);});
+    ['ce','cs','cl'].forEach(k=>{if(Number.isFinite(b[k])&&b[k]>0) o[k]=Math.min(1e8,Math.round(b[k]));});
+    if(Array.isArray(b.mr)) b.mr.forEach(m=>{if(typeof m==='string'&&/^\d{4}-\d\d$/.test(m)&&!o.mr.includes(m)&&o.mr.length<60) o.mr.push(m);});
   }
   bpUnlock(o);
   return o;
@@ -546,6 +628,7 @@ function mergeBp(a,b){
   const o=normBp(a);
   o.pts=Math.max(o.pts,b.pts);o.bw=o.bw.map((v,i)=>v||b.bw[i]?1:0);
   b.unl.forEach(id=>{if(!o.unl.includes(id)) o.unl.push(id);});
+  o.ce=Math.max(o.ce,b.ce);o.cs=Math.max(o.cs,b.cs);o.cl=Math.max(o.cl,b.cl);b.mr.forEach(m=>{if(!o.mr.includes(m)) o.mr.push(m);});
   if(b.day>o.day){o.day=b.day;o.dp=b.dp;}
   bpUnlock(o);return o;
 }
@@ -567,7 +650,7 @@ function normSkin(k,bp){
 function cleanUsers(list){
   const seen=new Set();
   return (Array.isArray(list)?list:[]).filter(u=>u&&typeof u.id==='string'&&typeof u.name==='string'&&u.name.trim()&&!seen.has(u.id)&&seen.add(u.id))
-    .map(u=>({id:u.id,name:u.name.trim().slice(0,16),st:normStats(u.st),fav:normFav(u.fav),hist:normHist(u.hist),games:normGames(u.games),cid:typeof u.cid==='string'?u.cid.slice(0,60):'',bp:normBp(u.bp),skin:normSkin(u.skin,normBp(u.bp))}));
+    .map(u=>({id:u.id,name:u.name.trim().slice(0,16),st:normStats(u.st),fav:normFav(u.fav),hist:normHist(u.hist),games:normGames(u.games),cid:typeof u.cid==='string'?u.cid.slice(0,60):'',ctok:typeof u.ctok==='string'?u.ctok.slice(0,60):'',bp:normBp(u.bp),skin:normSkin(u.skin,normBp(u.bp))}));
 }
 let STORE={users:[]};
 function loadStore(){
@@ -734,13 +817,14 @@ function newGame(cfg){
   } else if(mode==='killer'){
     G.phase='kpick';
   }
-  HIST=[];committed=null;
+  HIST=[];committed=null;ui.edit=null;
   if(!G.bull&&G.phase==='throw') speak(CL().go+' '+CL().begins(cur().name));
 }
 function snapshot(){HIST.push(JSON.stringify(G));}
 /* Geht zum letzten Stand zurück, in dem ein Mensch etwas ändern kann */
 function undo(){
   if(netGate('undo',[])) return;
+  ui.edit=null;
   if(!HIST.length) return;
   speakCancel();
   if(committed){STORE=JSON.parse(committed.backup);saveStore();committed=null;}
@@ -854,7 +938,7 @@ function bpAward(u,g,i,win){
   if(!p||!(p.darts>0)||g.players.length<2) return null;
   u.bp=normBp(u.bp);
   const bp=u.bp,opp=g.players.filter((_,j)=>j!==i),bots=opp.filter(q=>q.bot>=1&&q.bot<=5);
-  const before=bpLevel(bp.pts).lvl;
+  const before=bpLevel(bp.pts).lvl,cb=coinsOf(bp);
   let pts=0;const bonus=[];
   if(bots.length){
     const L=Math.max.apply(null,bots.map(q=>q.bot));
@@ -870,7 +954,7 @@ function bpAward(u,g,i,win){
   if(pts<=0) return null;
   bpAdd(bp,pts);
   const after=bpLevel(bp.pts).lvl;
-  return {pts,bonus,from:before,to:after,items:BP_ITEMS.filter(x=>x.lvl>before&&x.lvl<=after).map(x=>x.n)};
+  return {pts,bonus,from:before,to:after,coins:coinsOf(bp)-cb,items:BP_ITEMS.filter(x=>x.lvl>before&&x.lvl<=after).map(x=>x.n)};
 }
 function gainLines(g){
   if(!committed||committed.gid!==g.gid) return '';
@@ -878,7 +962,7 @@ function gainLines(g){
   g.players.forEach(q=>{
     const u=statUser(q),x=u&&committed.gain[u.id];
     if(!x) return;
-    out.push(`<div class="gain"><b>${esc(u.name)}</b>: +${x.pts} Battle-Pass-Punkte${x.bonus.length?` (erster Sieg gegen ${x.bonus.map(esc).join(', ')}: +${BP_FIRST*x.bonus.length})`:''}${x.to>x.from?`<br>Stufe ${x.to} erreicht${x.items.length?': neu '+x.items.map(esc).join(', '):''}`:''}</div>`);
+    out.push(`<div class="gain"><b>${esc(u.name)}</b>: +${x.pts} Battle-Pass-Punkte${x.bonus.length?` (erster Sieg gegen ${x.bonus.map(esc).join(', ')}: +${BP_FIRST*x.bonus.length})`:''}${x.to>x.from?`<br>Stufe ${x.to} erreicht${x.items.length?': neu '+x.items.map(esc).join(', '):''}`:''}${x.coins>0?`<br>+${x.coins} Coins`:''}</div>`);
   });
   return out.join('');
 }
@@ -977,8 +1061,25 @@ function applyKiller(d){
   if(alive.length===1) return legWon(alive[0]);
   endCheck();
 }
+const HOLD={ms:1000};   // Prüfzeit nach der dritten Dart (0 = sofort weiter)
+let REPLAY=false;
+/* Einen einzelnen Wurf der laufenden Aufnahme ändern: zurück zum Anfang der Aufnahme und alle Darts neu werfen */
+function correctDart(i,d){
+  if(!G||(G.phase!=='throw'&&G.phase!=='review')||!G.turn[i]||cur().bot) return;
+  const nd=Object.assign({n:d.n,m:d.m},d.pos?{pos:d.pos}:{});
+  if(netGate('correctDart',[i,{n:nd.n,m:nd.m,pos:nd.pos||null}])) return;
+  const ds=G.turn.map(x=>Object.assign({n:x.n,m:x.m},x.pos?{pos:x.pos}:{}));
+  ds[i]=nd;
+  if(HIST.length<ds.length) return;
+  REPLAY=true;ui.edit=null;
+  try{
+    for(let k=0;k<ds.length;k++) G=JSON.parse(HIST.pop());
+    ds.forEach(x=>throwDart(Object.assign({},x),true));
+  }finally{REPLAY=false;}
+}
 function throwDart(d,fromBot){
   if(!G) return;
+  if(ui.edit!=null&&!REPLAY&&G.turn[ui.edit]&&!cur().bot){const i=ui.edit;ui.edit=null;return correctDart(i,d);}
   if(!fromBot&&netGate('throwDart',[d])) return;
   if(G.phase==='kpick') return pickKiller(d,fromBot);
   if(G.phase!=='throw') return;
@@ -986,7 +1087,7 @@ function throwDart(d,fromBot){
   snapshot();
   d.val=d.n*d.m;
   G.turn.push(d);
-  if(ui.cfg.callDarts) speak(CL().dart(d));
+  if(ui.cfg.callDarts&&!REPLAY) speak(CL().dart(d));
   const key=fieldKey(d),pl=cur();
   pl.f[key]=(pl.f[key]||0)+1;
   addMark(G,d.pos||(d.n?aimPoint(d):null),G.cur);
@@ -994,7 +1095,7 @@ function throwDart(d,fromBot){
   if(isX01(m)) applyX01(d); else if(m==='cricket') applyCricket(d); else if(m==='killer') applyKiller(d); else applyClock(d);
   if(G.phase==='over') commitStats();
   /* Menschen: nach der Aufnahme sofort weiter. Bots bleiben kurz stehen, damit man ihre Darts sieht. */
-  else if(G.phase==='review'&&G.cfg.auto&&!cur().bot) nextPlayer();
+  else if(G.phase==='review'&&G.cfg.auto&&!cur().bot&&HOLD.ms<=0) nextPlayer();
 }
 function finish121(){
   const g=G;let w=0;
@@ -1003,6 +1104,7 @@ function finish121(){
 }
 function nextPlayer(){
   if(netGate('nextPlayer',[])) return;
+  ui.edit=null;
   if(!G||['over','legover','bull','bullwin','kpick'].includes(G.phase)) return;
   snapshot();
   const g=G,p=cur(),m=g.cfg.mode,wasBust=g.bust,wasPts=g.turnPts;
@@ -1217,7 +1319,7 @@ function offDbg(){
 const VOSK_JS=['vosk.js','https://cdn.jsdelivr.net/npm/vosk-browser@0.0.8/dist/vosk.js','https://cdn.jsdelivr.net/npm/vosk-browser@0.0.3/dist/vosk.js'];
 const VOSK_MODEL={de:'models/vosk-model-small-de-0.15.tar.gz',en:'models/vosk-model-small-en-us-0.15.tar.gz'};
 const offAvail=()=>typeof window!=='undefined'&&!!(window.AudioContext||window.webkitAudioContext)&&typeof WebAssembly!=='undefined'&&typeof Worker!=='undefined'&&!!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia);
-const offLang=()=>ui.cfg.lang==='en'?'en':'de';
+const offLang=()=>'de';   // Spracheingabe versteht Zahlen auf Deutsch, die Sprache der Ansage ist davon unabhängig
 function offScript(){
   return new Promise((ok,fail)=>{
     if(typeof Vosk!=='undefined') return ok();
@@ -1327,7 +1429,7 @@ function micStart(){
   if(!SRC){REC.err='Dieser Browser unterstützt keine Spracherkennung (Chrome, Edge oder Safari nutzen).';return;}
   micStop();
   const r=new SRC();
-  r.lang=ui.cfg.lang==='en'?'en-GB':'de-DE';r.continuous=true;r.interimResults=false;r.maxAlternatives=3;
+  r.lang='de-DE';r.continuous=true;r.interimResults=false;r.maxAlternatives=3;
   r.onresult=e=>{
     for(let i=e.resultIndex;i<e.results.length;i++){
       const res=e.results[i];if(!res.isFinal) continue;
@@ -1814,7 +1916,7 @@ function hostCall(conn,m){
   const cid=conn.__cid;
   if(!cid||!G||!G.online||!m||typeof m.fn!=='string') return;
   const fn=m.fn,a=Array.isArray(m.args)?m.args:[];
-  const turn=fn==='throwDart'||fn==='throwBull'||fn==='nextPlayer'||fn==='killerRandom';
+  const turn=fn==='throwDart'||fn==='throwBull'||fn==='nextPlayer'||fn==='killerRandom'||fn==='correctDart';
   if(turn&&cur().owner!==cid){NET.last='';render();return;}   // veraltete Eingabe: Stand nochmal schicken
   if(fn==='undo'&&undoOwner()!==cid){NET.last='';render();return;}   // nur den eigenen Wurf korrigieren
   const pos=v=>Array.isArray(v)&&v.length===2&&v.every(Number.isFinite)?[+v[0],+v[1]]:null;
@@ -1825,6 +1927,9 @@ function hostCall(conn,m){
       if(Number.isInteger(n)&&Number.isInteger(mm)&&n>=0&&n<=25&&mm>=0&&mm<=3){const dd={n,m:mm},pp=pos(d.pos);if(pp) dd.pos=pp;throwDart(dd);}
     } else if(fn==='throwBull'){
       const r=+a[0];if(Number.isFinite(r)) throwBull(r,false,pos(a[1]));
+    } else if(fn==='correctDart'){
+      const i=+a[0],d=a[1]||{},n=+d.n,mm=+d.m;
+      if(Number.isInteger(i)&&i>=0&&i<3&&Number.isInteger(n)&&Number.isInteger(mm)&&n>=0&&n<=25&&mm>=0&&mm<=3){const dd={n,m:mm},pp=pos(d.pos);if(pp) dd.pos=pp;correctDart(i,dd);}
     } else if(fn==='nextPlayer') nextPlayer();
     else if(fn==='undo') undo();
     else if(fn==='nextLeg') nextLeg();
@@ -1849,7 +1954,7 @@ function netSync(){
 /* Zentrale Weiche: leitet Eingaben von Mitspielern an den Host weiter und blockiert Eingaben außerhalb des eigenen Zuges */
 function netGate(fn,args){
   if(!NET.role||NET.applying||!G||!G.online) return false;
-  const turn=fn==='throwDart'||fn==='throwBull'||fn==='nextPlayer'||fn==='killerRandom';
+  const turn=fn==='throwDart'||fn==='throwBull'||fn==='nextPlayer'||fn==='killerRandom'||fn==='correctDart';
   if(NET.role==='host') return fn==='undo'?undoOwner()!==NET.me:(turn&&cur().owner!==NET.me);
   if(turn&&cur().owner!==NET.me) return true;
   if(fn==='undo'&&NET.uo!==NET.me) return true;
@@ -1956,7 +2061,7 @@ function cloudLoadCfg(){
   CLOUD.url=String(u||'').trim().replace(/\/+$/,'');CLOUD.key=String(k||'').trim();
 }
 const cloudOn=()=>!!(CLOUD.url&&CLOUD.key&&/^https:\/\//.test(CLOUD.url));
-const ACC={id:'',name:'',token:'',pub:false,busy:false,err:'',msg:'',tab:'login',name2:'',pin:'',pin2:'',oldpin:'',cfgUrl:'',cfgKey:''};
+const ACC={id:'',name:'',token:'',pub:false,admin:false,busy:false,err:'',msg:'',tab:'login',name2:'',pin:'',pin2:'',oldpin:'',cfgUrl:'',cfgKey:''};
 const PROF={list:null,loading:false,err:'',open:null,data:{}};
 function accLoad(){
   try{const s=JSON.parse(localStorage.getItem('dart-acc')||'null');if(s&&s.token&&s.id){ACC.id=String(s.id);ACC.name=String(s.name||'');ACC.token=String(s.token);ACC.pub=!!s.pub;}}catch(e){}
@@ -1964,7 +2069,7 @@ function accLoad(){
 function accSave(){try{if(ACC.token) localStorage.setItem('dart-acc',JSON.stringify({id:ACC.id,name:ACC.name,token:ACC.token,pub:ACC.pub})); else localStorage.removeItem('dart-acc');}catch(e){}}
 const CLOUD_ERR={bad_name:'Der Name muss 2 bis 16 Zeichen lang sein.',bad_pin:'Die PIN muss aus genau 6 Ziffern bestehen.',name_taken:'Diesen Namen gibt es schon. Melde dich an oder wähle einen anderen.',
   bad_login:'Name oder PIN stimmt nicht.',locked:'Zu viele Fehlversuche. Bitte in 15 Minuten noch einmal versuchen.',no_session:'Du bist nicht mehr angemeldet. Bitte neu anmelden.',
-  not_found:'Dieses Profil ist nicht (mehr) öffentlich.',too_big:'Die Daten sind zu groß.',bad_data:'Ungültige Daten.'};
+  forbidden:'Dafür fehlt dir die Admin-Berechtigung.',not_found:'Dieses Profil ist nicht (mehr) öffentlich.',too_big:'Die Daten sind zu groß.',bad_data:'Ungültige Daten.'};
 async function rpc(fn,args){
   if(!cloudOn()) throw new Error('Server ist nicht eingerichtet.');
   const ctl=typeof AbortController!=='undefined'?new AbortController():null,to=setTimeout(()=>{if(ctl)ctl.abort();},15000);
@@ -1989,33 +2094,81 @@ function accLocalUser(){
   u.cid=ACC.id;return u;
 }
 function accRecentGames(u){return (u.games||[]).slice(0,5);}
+/* Schlüssel eines Spielers: der Besitzer des Geräts nutzt ACC, weitere Konten (z. B. ein Freund) haben ihren eigenen Schlüssel */
+const userToken=u=>!u||!u.cid?'':(u.cid===ACC.id?ACC.token:(u.ctok||''));
 /* Abgleich nach der Anmeldung: Wer mehr Spiele hat, gewinnt (so geht nichts verloren) */
-async function accSync(){
-  const u=accLocalUser();if(!u) return;
-  const me=await rpc('dart_me',{p_token:ACC.token});
+async function syncUser(u,token){
+  const me=await rpc('dart_me',{p_token:token});
   const cloudN=totalGames(me.stats),localN=totalGames(u.st);
   if(cloudN>localN){u.st=normStats(me.stats);u.hist=normHist(me.hist);u.games=normGames(me.games);}
   const cb=normBp(me.bp),merged=mergeBp(u.bp,cb);
   u.skin=normSkin(cb.pts>u.bp.pts&&me.skin&&Object.keys(me.skin).length?me.skin:u.skin,merged);u.bp=merged;
-  if(localN>=cloudN||cb.pts<merged.pts) await cloudPush(u);
-  ACC.pub=!!me.public;accSave();saveStore();
+  if(localN>=cloudN||cb.pts<merged.pts||coinsOf(cb)!==coinsOf(merged)||cb.unl.length<merged.unl.length) await cloudPush(u);
+  return me;
+}
+async function accSync(){
+  const u=accLocalUser();if(!u) return;
+  const me=await syncUser(u,ACC.token);
+  ACC.pub=!!me.public;ACC.admin=!!me.admin;accSave();saveStore();
 }
 async function cloudPush(u){
-  if(!ACC.token||!u||u.cid!==ACC.id||!cloudOn()) return;
-  await rpc('dart_push',{p_token:ACC.token,p_stats:u.st,p_hist:u.hist.slice(-300),p_games:accRecentGames(u)});
-  try{await rpc('dart_push_char',{p_token:ACC.token,p_skin:u.skin,p_bp:u.bp});}catch(e){if(/anmelden/.test(e.message)) throw e;}
+  const t=userToken(u);
+  if(!t||!cloudOn()) return;
+  await rpc('dart_push',{p_token:t,p_stats:u.st,p_hist:u.hist.slice(-300),p_games:accRecentGames(u)});
+  try{await rpc('dart_push_char',{p_token:t,p_skin:u.skin,p_bp:u.bp});}catch(e){if(/anmelden/.test(e.message)) throw e;}
 }
 let pushTimer=0,pushBusy=false;
 function cloudPushSoon(){
-  if(!ACC.token||!cloudOn()) return;
+  if(!cloudOn()||!STORE.users.some(u=>userToken(u))) return;
   clearTimeout(pushTimer);
   pushTimer=setTimeout(async()=>{
     if(pushBusy) return cloudPushSoon();
     pushBusy=true;
-    try{const u=STORE.users.find(x=>x.cid===ACC.id);await cloudPush(u);ACC.err='';}
-    catch(e){ACC.err='Statistik konnte nicht hochgeladen werden: '+e.message;if(/anmelden/.test(e.message)) {ACC.token='';accSave();}}
-    finally{pushBusy=false;if(typeof render==='function'&&ui.screen==='account') render();}
+    for(const u of STORE.users.filter(x=>userToken(x))){
+      try{await cloudPush(u);if(u.cid===ACC.id) ACC.err='';}
+      catch(e){
+        if(/anmelden/.test(e.message)){if(u.cid===ACC.id){ACC.token='';accSave();}else{u.ctok='';saveStore();}}
+        if(u.cid===ACC.id) ACC.err='Statistik konnte nicht hochgeladen werden: '+e.message;
+      }
+    }
+    pushBusy=false;if(typeof render==='function'&&ui.screen==='account') render();
   },800);
+}
+/* Weiteres Konto auf diesem Gerät anmelden (z. B. Max am Handy von Paul) */
+const AA={open:false,slot:null,name:'',pin:'',err:'',busy:false};
+function aaOpen(slot){Object.assign(AA,{open:true,slot:slot==null?null:slot,name:'',pin:'',err:'',busy:false});}
+async function aaGo(){
+  if(AA.busy) return;
+  const name=String(AA.name||'').trim(),pin=String(AA.pin||'');
+  AA.err='';
+  if(name.length<2){AA.err=CLOUD_ERR.bad_name;return render();}
+  if(!/^\d{6}$/.test(pin)){AA.err=CLOUD_ERR.bad_pin;return render();}
+  AA.busy=true;render();
+  try{
+    const r=await rpc('dart_login',{p_name:name,p_pin:pin});
+    let u=STORE.users.find(x=>x.cid===r.id)||STORE.users.find(x=>!x.cid&&x.name.toLowerCase()===String(r.name).toLowerCase());
+    if(!u){const c=createUser(r.name);if(c.err) throw new Error(c.err);u=c.user;}
+    u.cid=r.id;u.ctok=r.id===ACC.id?'':r.token;
+    await syncUser(u,userToken(u));
+    saveStore();
+    if(AA.slot!=null&&ui.cfg.slots[AA.slot]){
+      const taken=ui.cfg.slots.slice(0,ui.cfg.players).some((x,j)=>j!==AA.slot&&x.uid===u.id&&!x.bot);
+      if(taken) throw new Error(u.name+' spielt schon mit.');
+      const sl=ui.cfg.slots[AA.slot];sl.remote=false;sl.bot=0;sl.uid=u.id;saveSetup();
+    }
+    AA.open=false;AA.name='';AA.pin='';
+    ACC.msg=u.name+' ist auf diesem Gerät angemeldet.';
+  }catch(e){AA.err=e.message;}
+  AA.busy=false;render();
+}
+function aaModal(){
+  if(!AA.open) return '';
+  return `<div class="modal"><div class="card"><h2>Mit Konto anmelden</h2>
+    <div class="rules" style="margin-bottom:10px">Gib Name und PIN des Kontos ein, das mitspielen soll, zum Beispiel von einem Freund an diesem Handy. Seine Statistik wird danach auf seinem eigenen Konto gespeichert.<br>Noch kein Konto? Das legt die Person unter Profil → Konto an.</div>
+    <label class="fld"><span>Name des Kontos</span><input type="text" data-aa="name" maxlength="16" value="${esc(AA.name)}" autocomplete="off" autocapitalize="none"></label>
+    <label class="fld"><span>PIN (6 Ziffern)</span><input type="password" data-aa="pin" inputmode="numeric" pattern="[0-9]*" maxlength="6" value="${esc(AA.pin)}" autocomplete="off"></label>
+    ${AA.err?`<div class="err">${esc(AA.err)}</div>`:''}
+    <div class="row" style="margin-top:12px"><button class="ghost" data-act="aa-cancel">Abbrechen</button><button class="next" data-act="aa-go" ${AA.busy?'disabled':''}>${AA.busy?'Bitte warten …':'Anmelden'}</button></div></div></div>`;
 }
 async function accEnter(kind){
   if(ACC.busy) return;
@@ -2027,14 +2180,18 @@ async function accEnter(kind){
   ACC.busy=true;render();
   try{
     const r=await rpc(kind==='register'?'dart_register':'dart_login',{p_name:name,p_pin:pin});
-    Object.assign(ACC,{id:r.id,name:r.name,token:r.token,pub:!!r.public,pin:'',pin2:''});accSave();
+    Object.assign(ACC,{id:r.id,name:r.name,token:r.token,pub:!!r.public,pin:'',pin2:'',admin:false});accSave();
     await accSync();
     ACC.msg=kind==='register'?'Konto angelegt. Du bist angemeldet.':'Angemeldet.';
   }catch(e){ACC.err=e.message;}
   ACC.busy=false;render();
 }
+async function accAdminCheck(){
+  if(!ACC.token||!cloudOn()) return;
+  try{const me=await rpc('dart_me',{p_token:ACC.token});if(!!me.admin!==ACC.admin){ACC.admin=!!me.admin;if(ui.screen==='account') render();}}catch(e){}
+}
 async function accLogout(){
-  const t=ACC.token;ACC.token='';ACC.id='';ACC.name='';ACC.pub=false;ACC.msg='Abgemeldet.';accSave();render();
+  const t=ACC.token;ACC.token='';ACC.id='';ACC.name='';ACC.pub=false;ACC.admin=false;ACC.msg='Abgemeldet.';accSave();render();
   try{if(t) await rpc('dart_logout',{p_token:t});}catch(e){}
 }
 async function accSetPublic(v){
@@ -2055,7 +2212,7 @@ async function accChangePin(){
 }
 async function profLoadList(){
   if(PROF.loading||!cloudOn()) return;
-  PROF.loading=true;PROF.err='';render();
+  PROF.loading=true;PROF.err='';if(ui.screen!=='home') render();
   try{PROF.list=await rpc('dart_list_public',{})||[];}catch(e){PROF.err=e.message;PROF.list=null;}
   PROF.loading=false;render();
 }
@@ -2146,7 +2303,7 @@ function slotRow(i){
   const u=(sl.bot||sl.remote)?null:findUser(sl.uid);
   const used=new Set(c.slots.slice(0,c.players).filter((s,j)=>j!==i&&s.uid&&!s.bot).map(s=>s.uid));
   const opts=`<option value="">Gast</option>`+STORE.users.map(x=>`<option value="${esc(x.id)}" ${!sl.bot&&x.id===sl.uid?'selected':''} ${used.has(x.id)?'disabled':''}>${esc(x.name)}</option>`).join('')
-    +`<option value="__remote" ${sl.remote?'selected':''}>🌐 Online-Spieler</option><option value="__bot" ${sl.bot?'selected':''}>🤖 Bot</option><option value="__new">＋ Neuer Benutzer …</option>`;
+    +`<option value="__remote" ${sl.remote?'selected':''}>🌐 Online-Spieler</option><option value="__bot" ${sl.bot?'selected':''}>🤖 Bot</option><option value="__new">＋ Neuer Benutzer …</option>${cloudOn()?'<option value="__acc">🔑 Mit Konto anmelden …</option>':''}`;
   let extra='';
   if(ui.newSlot===i){
     extra=`<div class="newrow"><input type="text" data-newname maxlength="16" placeholder="Name des neuen Benutzers" autocomplete="off" value="${esc(ui.newText)}"><button class="ghost" data-act="create" data-v="${i}">Anlegen</button><button class="ghost" data-act="cancelnew" aria-label="Abbrechen">✕</button></div>${ui.err?`<div class="err">${esc(ui.err)}</div>`:''}`;
@@ -2217,7 +2374,8 @@ function fib(n){
 const _unit=v=>{const l=Math.hypot(v[0],v[1],v[2])||1;return [v[0]/l,v[1]/l,v[2]/l];};
 function mixHex(c,f){const r=_hex(c);const h=x=>('0'+Math.max(0,Math.min(255,Math.round(x*f))).toString(16)).slice(-2);return '#'+h(r[0])+h(r[1])+h(r[2]);}
 const HC=[0,2.3,0],HR=.5;           // Kopf wird in "Kopfeinheiten" gebaut und danach auf die Körpergröße skaliert
-const HEAD_AT=[0,2.56,0],HS=.72;
+const HEAD_AT=[0,2.3,0],HS=1.3,BS=.8;   // großer, glatter Kopf auf kompaktem Körper (Vinyl-Figur)
+const mixTo=(c,d,t)=>{const a=_hex(c),b=_hex(d),h=x=>('0'+Math.round(x).toString(16)).slice(-2);return '#'+h(a[0]+(b[0]-a[0])*t)+h(a[1]+(b[1]-a[1])*t)+h(a[2]+(b[2]-a[2])*t);};
 const onHead=(d,kk)=>[HC[0]+d[0]*HR*kk,HC[1]+d[1]*HR*kk,HC[2]+d[2]*HR*kk];
 function figParts(k,bust){
   const P=[];
@@ -2227,7 +2385,7 @@ function figParts(k,bust){
   const cap=(a,b,r,c,n,nv)=>{n=n||4;for(let i=0;i<=n;i++){const t=i/n;S([a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t],r,c,{n:nv||[0,.15,1]});}};
   const pants='#2d3347',shirtC=SHIRT_COL[k.shirt]||SHIRT_COL.blue,sk=k.sc,hc=k.hc,GOLD='#d9b13a';
   const sleeve=sd=>mixHex(k.shirt==='split'?(sd<0?'#2f6fd1':'#d33b3b'):k.shirt==='stripes'?'#2f6fd1':shirtC,.9);
-  const H=[.46,1.46,.48]; // Hand, die den Gegenstand hält
+  const H=[.46*BS,1.46*BS,.48*BS]; // Hand, die den Gegenstand hält
 
   /* Beine, Schuhe, Becken */
   [-1,1].forEach(sd=>{cap([sd*.15,1.25,0],[sd*.15,.2,0],.125,pants,7);S([sd*.15,.1,.08],.13,'#1d1d22',{n:[0,.3,1]});S([sd*.15,.09,.22],.105,'#1d1d22',{n:[0,.3,1]});});
@@ -2246,6 +2404,8 @@ function figParts(k,bust){
       let c=shirtC;
       if(k.shirt==='stripes') c=(j>>1)%2?'#eeeeee':'#2f6fd1';
       else if(k.shirt==='split') c=cx<0?'#2f6fd1':'#d33b3b';
+      else if(k.shirt==='checks') c=((j>>1)+(a>>1))%2?'#f1f1f1':'#c0392b';
+      else if(k.shirt==='rainbow') c=['#d33b3b','#e8872b','#f2cf2e','#2e9d57','#2f6fd1','#7a4fc9'][Math.floor(j*6/9)];
       S([cx*rx,y,sz*rz],j===8?.12:.155,c,{n:[cx*.8,.1,sz*.8+.2]});
     }
   }
@@ -2261,19 +2421,23 @@ function figParts(k,bust){
   if(k.extra==='chain'){for(let a=-5;a<=5;a++){const g=a*.17;S([Math.sin(g)*.27,2.08-.15*Math.cos(g),Math.cos(g)*.22+.02],.025,GOLD,{n:[0,0,1]});}S([0,1.8,.28],.055,GOLD,{n:[0,0,1]});}
   if(k.extra==='medal'){[-1,1].forEach(sd=>cap([sd*.1,2.1,.22],[0,1.9,.27],.022,'#c0272d',3,[0,0,1]));S([0,1.8,.28],.08,GOLD,{n:[0,0,1]});S([0,1.8,.33],.05,'#f3d36b',{n:[0,0,1]});}
 
+  if(k.extra==='bowtie'){[-1,1].forEach(sd=>S([sd*.09,2.1,.27],.085,'#d33b3b',{n:[sd,0,1]}));S([0,2.1,.29],.05,'#a82727',{n:[0,0,1]});}
+  if(k.extra==='pearls'){for(let a=-6;a<=6;a++){const g=a*.15;S([Math.sin(g)*.28,2.1-.12*Math.cos(g),Math.cos(g)*.23+.02],.04,'#f7f7f7',{n:[0,0,1]});}}
+  if(k.extra==='backpack'){for(let j=0;j<3;j++)for(let i=-1;i<=1;i++)S([i*.16,1.5+j*.17,-.36],.15,'#e8872b',{n:[0,0,-1]});[-1,1].forEach(sd=>cap([sd*.2,2.08,.2],[sd*.2,1.62,.3],.035,'#6b3a1e',3,[0,0,1]));}
+  if(k.extra==='jetpack')[-1,1].forEach(sd=>{Cy(sd*.17,1.7,-.4,.12,.55,'#9aa3ad');S([sd*.17,1.98,-.4],.12,'#c9ced6',{n:[0,1,0]});S([sd*.17,1.4,-.4],.1,'#ffb52e');S([sd*.17,1.3,-.4],.07,'#e8481a');});
+  if(k.extra==='aura')for(let a=0;a<16;a++){const g=a/16*6.2832;S([Math.cos(g)*.8,.5+(a%6)*.38,Math.sin(g)*.8],.05,a%2?'#ffe27a':'#fff7c4',{n:[0,1,0]});}
+  /* Körper kompakt machen */
+  for(let i=0;i<P.length;i++){const p=P[i];p.x*=BS;p.y*=BS;p.z*=BS;p.r*=BS;if(p.h) p.h*=BS;}
+
   /* ---------- Kopf (Kopfeinheiten, wird danach skaliert) ---------- */
   const h0=P.length,dn=d=>({n:d});
   if(k.extra==='halo'){for(let a=0;a<16;a++){const g=a/16*6.2832;S([Math.cos(g)*.34,HC[1]+1.0,Math.sin(g)*.34],.045,'#ffe27a',{n:[0,1,0]});}}
   S(HC,HR,sk,{head:1});
-  [-1,1].forEach(sd=>S(onHead([sd,-.04,-.04],1.0),.1,sk,{n:[sd,0,.5]}));
-  S(onHead(_unit([0,-.12,1]),1.02),.09,sk,{n:[0,.2,1]});
-  const browC=mixHex(hc,.55);
   [-1,1].forEach(sd=>{
-    const e=_unit([sd*.36,.1,.92]);
-    F(e,1.0,.085,'#fbfbfb');F(e,1.004,.052,'#4a3320');F(e,1.008,.026,'#0d0d0d');
-    [[.16,.3],[.3,.34],[.44,.3]].forEach(b=>F(_unit([sd*b[0],b[1]+.07,Math.sqrt(Math.max(.05,1-b[0]*b[0]-b[1]*b[1]))]),1.0,.04,browC));
+    F(_unit([sd*.34,.06,.94]),1.0,.066,'#15151a');
+    F(_unit([sd*.6,-.22,.77]),1.0,.1,mixTo(sk,'#ff8a8a',.38));
   });
-  for(let i=-3;i<=3;i++){const x=i*.08,y=-.45+.08*Math.pow(x/.24,2);F(_unit([x,y,Math.sqrt(Math.max(.05,1-x*x-y*y))]),1.0,i===0?.04:.032,'#9c3f3a');}
+  for(let i=-2;i<=2;i++){const x=i*.065,y=-.4+1.6*x*x;F(_unit([x,y,Math.sqrt(Math.max(.05,1-x*x-y*y))]),1.0,i===0?.03:.026,'#8a3f3a');}
 
   /* Haare */
   const pts=fib(110),inCap=d=>d[1]>.38||(d[1]>-.25&&d[2]<-.15)||(d[1]>0&&Math.abs(d[0])>.78&&d[2]<.3),face=d=>d[2]>.25&&d[1]<.62&&d[1]>-.95;
@@ -2288,6 +2452,11 @@ function figParts(k,bust){
     case 'mohawk':for(let t=20;t<=160;t+=14){const a=t*Math.PI/180,d=[0,Math.sin(a),Math.cos(a)];HS3(d,1.08,.12,hc);if(d[1]>.5) HS3(d,1.3,.1,hc);}break;
     case 'afro':fib(60).forEach(d=>{if(d[1]>-.3&&!(d[2]>.3&&d[1]<.68)) HS3(d,1.1,.27,hc);});break;
     case 'bun':capHair();S([0,HC[1]+.5,-.38],.2,hc,dn([0,.5,-1]));S([0,HC[1]+.58,-.4],.12,hc,dn([0,1,-.5]));break;
+    case 'pony':capHair();cap([0,HC[1]+.25,-.52],[0,HC[1]-.5,-.78],.15,hc,5,[0,0,-1]);S([0,HC[1]+.25,-.52],.08,'#d33b3b',dn([0,0,-1]));break;
+    case 'twin':capHair();[-1,1].forEach(sd=>{cap([sd*.52,HC[1]+.02,-.12],[sd*.74,HC[1]-.7,-.1],.14,hc,5,[sd,0,0]);S([sd*.54,HC[1]-.05,-.12],.08,'#d33b3b',dn([sd,0,0]));});break;
+    case 'curly':fib(90).forEach(d=>{if(d[1]>-.35&&!face(d)) HS3(d,1.06,.2,hc);});break;
+    case 'rainbow':{const RB=['#d33b3b','#e8872b','#f2cf2e','#2e9d57','#2f6fd1','#7a4fc9'];pts.forEach(d=>{if(inCap(d)&&!face(d)) HS3(d,1.03,.18,RB[Math.floor((d[0]+1)*2.99)]);});break;}
+    case 'flame':capHair();pts.filter(d=>d[1]>.35&&!face(d)).forEach((d,i)=>{if(i%2===0) cap(onHead(d,1.0),onHead(d,1.5+(i%4)*.12),.1,i%4?'#ffb52e':'#e8481a',3,d);});break;
     case 'side':capHair();S([-.18,HC[1]+.52,.4],.15,hc,dn([0,.6,1]));S([0,HC[1]+.55,.38],.15,hc,dn([0,.6,1]));S([.2,HC[1]+.5,.4],.13,hc,dn([0,.6,1]));break;
   }
 
@@ -2304,13 +2473,26 @@ function figParts(k,bust){
     case 'headband':ring(HC[1]+.14,.48,16,.07,'#d33b3b');S([0,HC[1]+.14,-.5],.1,'#d33b3b',dn([0,0,-1]));break;
     case 'helmet':dome('#7a8088',1.16,.24,.0);for(let t=15;t<=165;t+=15){const a=t*Math.PI/180,d=[0,Math.sin(a),Math.cos(a)];HS3(d,1.27,.07,'#aeb4bc');}break;
     case 'laurel':ring(HC[1]+.18,.52,18,.07,'#3f8f3a');ring(HC[1]+.2,.54,6,.06,GOLD);break;
+    case 'party':for(let i=0;i<6;i++) S([0,HC[1]+.5+i*.12,0],.2-i*.03,i%2?'#ff5fa2':'#3ec6e0',dn([0,1,0]));S([0,HC[1]+1.2,0],.06,'#ffe27a',dn([0,1,0]));break;
+    case 'chef':Cy(0,HC[1]+.5,0,.4,.2,'#f4f4f4');for(let a=0;a<6;a++){const g=a/6*6.2832;S([Math.cos(g)*.22,HC[1]+.8,Math.sin(g)*.22],.22,'#fafafa',dn([Math.cos(g),1,Math.sin(g)]));}S([0,HC[1]+.95,0],.24,'#ffffff',dn([0,1,0]));break;
+    case 'cowboy':Cy(0,HC[1]+.42,0,.8,.04,'#8a5a2b');Cy(0,HC[1]+.62,0,.36,.38,'#9a6a33');Cy(0,HC[1]+.48,0,.37,.08,'#3b2a1a');break;
+    case 'propeller':dome('#2f6fd1',1.08,.17,.35);Cy(0,HC[1]+.62,0,.025,.18,'#444');cap([-.36,HC[1]+.74,0],[.36,HC[1]+.74,0],.05,'#e03a3a',4);cap([0,HC[1]+.74,-.36],[0,HC[1]+.74,.36],.05,'#f2cf2e',4);S([0,HC[1]+.74,0],.07,'#222',dn([0,1,0]));break;
+    case 'bunny':[-1,1].forEach(sd=>{cap([sd*.2,HC[1]+.42,0],[sd*.24,HC[1]+1.25,-.05],.1,'#f4f4f4',6,[sd,.3,1]);cap([sd*.2,HC[1]+.5,.07],[sd*.24,HC[1]+1.1,.02],.05,'#ffb3c8',5,[0,.3,1]);});break;
+    case 'cat':dome('#3a3a3e',1.05,.17,.45);[-1,1].forEach(sd=>{cap([sd*.3,HC[1]+.4,0],[sd*.4,HC[1]+.78,0],.12,'#3a3a3e',3,[sd,.4,1]);S([sd*.37,HC[1]+.7,.06],.06,'#ffb3c8',dn([0,.3,1]));});break;
+    case 'phones':for(let t=0;t<=180;t+=15){const a=t*Math.PI/180;S([Math.cos(a)*.57,HC[1]+Math.sin(a)*.57,0],.05,'#222',dn([0,1,0]));}[-1,1].forEach(sd=>{S([sd*.54,HC[1]-.02,0],.17,'#2a2a2e',dn([sd,0,0]));S([sd*.62,HC[1]-.02,0],.12,'#d33b3b',dn([sd,0,0]));});break;
+    case 'viking':dome('#8a8f98',1.12,.2,.1);[-1,1].forEach(sd=>{cap([sd*.5,HC[1]+.25,0],[sd*.8,HC[1]+.42,0],.09,'#f1ead2',3,[sd,.3,0]);cap([sd*.8,HC[1]+.42,0],[sd*.92,HC[1]+.85,0],.06,'#f1ead2',3,[sd,.3,0]);});break;
+    case 'unicorn':for(let i=0;i<5;i++) S([0,HC[1]+.5+i*.15,.12+i*.02],.12-i*.02,i%2?'#ffe9a8':'#ffd1f0',dn([0,1,.4]));[-1,1].forEach(sd=>cap([sd*.25,HC[1]+.42,-.05],[sd*.3,HC[1]+.65,-.05],.07,'#f4f4f4',2,[sd,1,0]));break;
+    case 'wizard':Cy(0,HC[1]+.42,0,.7,.04,'#3b2a8a');for(let i=0;i<7;i++) S([0,HC[1]+.5+i*.14,-i*.02],.4-i*.055,'#3b2a8a',dn([0,1,.3]));S([0,HC[1]+.72,.36],.05,'#ffd84a',dn([0,0,1]));S([.12,HC[1]+.95,.28],.04,'#ffd84a',dn([0,0,1]));break;
   }
 
   /* Brille */
-  const eyeDirs=[-1,1].map(sd=>_unit([sd*.36,.1,.92]));
+  const eyeDirs=[-1,1].map(sd=>_unit([sd*.34,.06,.94]));
   const temples=()=>[-1,1].forEach(sd=>cap(onHead(_unit([sd*.9,.1,.4]),1.02),[sd*.5,HC[1]-.0,-.02],.015,'#111',3,[0,0,1]));
   if(k.glasses==='round'){eyeDirs.forEach(e=>F(e,1.012,.15,'#111',{ring:1,fill:'rgba(190,225,255,.25)'}));F(_unit([0,.1,.99]),1.012,.03,'#111');temples();}
   if(k.glasses==='shades'){eyeDirs.forEach(e=>F(e,1.012,.15,'#0b0b0b'));F(_unit([0,.1,.99]),1.012,.03,'#0b0b0b');temples();}
+  if(k.glasses==='3d'){F(eyeDirs[0],1.012,.15,'#ff3b3b');F(eyeDirs[1],1.012,.15,'#18c8ff');F(_unit([0,.06,.99]),1.012,.03,'#fff');temples();}
+  if(k.glasses==='heart')eyeDirs.forEach(e=>{F(_unit([e[0]-.07,e[1]+.05,e[2]]),1.012,.09,'#e0306a');F(_unit([e[0]+.07,e[1]+.05,e[2]]),1.012,.09,'#e0306a');F(_unit([e[0],e[1]-.06,e[2]]),1.012,.1,'#e0306a');});
+  if(k.glasses==='star'){eyeDirs.forEach(e=>{F(e,1.012,.15,'#e0a800',{ring:1,fill:'rgba(255,240,150,.45)'});for(let a=0;a<5;a++){const g=a/5*6.2832+1.57;F(_unit([e[0]+Math.cos(g)*.2,e[1]+Math.sin(g)*.2,e[2]]),1.012,.04,'#ffd84a');}});F(_unit([0,.06,.99]),1.012,.03,'#e0a800');temples();}
   if(k.glasses==='visor'){for(let i=-4;i<=4;i++){const x=i*.11;F(_unit([x,.1,Math.sqrt(1-x*x-.01)]),1.012,.1,'#27d3f0');}}
   if(k.glasses==='mono'){F(eyeDirs[1],1.012,.15,'#c9a227',{ring:1,fill:'rgba(190,225,255,.25)'});cap(onHead(_unit([.45,-.15,.87]),1.01),[.5,1.9,.35],.012,'#c9a227',3,[0,0,1]);}
 
@@ -2332,11 +2514,19 @@ function figParts(k,bust){
     case 'flag':cap([hx,hy-.1,hz],[hx,hy+.8,hz],.018,'#8a6a3a',6);for(let i=0;i<4;i++)for(let j=0;j<2;j++)S([hx+.09+i*.09,hy+.72-j*.1,hz],.065,(i+j)%2?'#fbfbfb':'#d33b3b',{n:[0,0,1]});break;
     case 'wand':cap([hx,hy,hz],[hx,hy+.45,hz+.2],.022,'#5a3a1e',4);sp(hx,hy+.52,hz+.23,.065,'#ffd84a');sp(hx+.1,hy+.6,hz+.2,.028,'#fff');sp(hx-.09,hy+.57,hz+.26,.028,'#fff');sp(hx+.02,hy+.68,hz+.22,.024,'#fff');break;
     case 'sword':cap([hx,hy+.1,hz],[hx,hy+.9,hz],.032,'#cfd6dd',7);cap([hx-.12,hy+.1,hz],[hx+.12,hy+.1,hz],.028,GOLD,3);sp(hx,hy-.05,hz,.045,GOLD);break;
+    case 'burger':sp(hx,hy+.08,hz+.02,.13,'#d9a05b');sp(hx,hy+.15,hz+.02,.14,'#6b3a1e');sp(hx,hy+.2,hz+.02,.13,'#f2cf2e');sp(hx,hy+.24,hz+.02,.14,'#4aa84a');sp(hx,hy+.32,hz+.02,.15,'#d9a05b');break;
+    case 'pizza':for(let i=0;i<5;i++)for(let j=-(4-i);j<=4-i;j+=2)sp(hx+j*.035,hy+.04+i*.07,hz,.05,i===4?'#d9a05b':'#f2c14b');sp(hx-.02,hy+.16,hz+.04,.03,'#c0392b');sp(hx+.03,hy+.26,hz+.04,.03,'#c0392b');break;
+    case 'icecream':for(let i=0;i<5;i++)sp(hx,hy+.04+i*.06,hz,.025+i*.018,'#d9a05b');sp(hx,hy+.36,hz,.13,'#ff8fb7');sp(hx,hy+.5,hz,.11,'#fff3d6');sp(hx,hy+.6,hz,.04,'#d33b3b');break;
+    case 'balloon':cap([hx,hy,hz],[hx,hy+.6,hz+.05],.01,'#ddd',5);sp(hx,hy+.88,hz+.06,.23,'#e03a6a');sp(hx-.08,hy+.97,hz+.22,.05,'#fff');break;
+    case 'umbrella':cap([hx,hy-.1,hz],[hx,hy+.62,hz],.02,'#444',6);for(let k2=0;k2<3;k2++){const r0=[0,.14,.28][k2];for(let a=0;a<(k2?8:1);a++){const g=a/8*6.2832;sp(hx+Math.cos(g)*r0,hy+.8-k2*.07,hz+Math.sin(g)*r0,.1,a%2?'#d33b3b':'#f4f4f4');}}break;
+    case 'guitar':sp(hx,hy+.1,hz+.05,.16,'#b5772f');sp(hx,hy+.27,hz+.05,.12,'#b5772f');cap([hx,hy+.35,hz+.05],[hx,hy+.82,hz+.05],.025,'#5a3a1e',5);sp(hx,hy+.88,hz+.05,.05,'#5a3a1e');sp(hx,hy+.18,hz+.2,.04,'#222');break;
+    case 'goldmic':cap([hx,hy,hz],[hx,hy+.25,hz+.04],.04,GOLD,3);sp(hx,hy+.36,hz+.05,.11,'#ffd84a');sp(hx-.04,hy+.4,hz+.14,.03,'#fff');break;
+    case 'diamond':sp(hx,hy+.2,hz,.11,'#4cc9ee');sp(hx,hy+.3,hz,.16,'#7fe3ff');sp(hx,hy+.42,hz,.1,'#bff4ff');sp(hx-.05,hy+.36,hz+.12,.035,'#fff');break;
     case 'trophy':case 'trophy100':{const b=k.hand==='trophy100',s=b?1.2:1;
       Cy(hx,hy+.07*s,hz,.1*s,.06*s,'#7a5a14');Cy(hx,hy+.2*s,hz,.03*s,.2*s,GOLD);Cy(hx,hy+.42*s,hz,.14*s,.24*s,b?'#ffd84a':GOLD);
       sp(hx-.17*s,hy+.42*s,hz,.045*s,GOLD);sp(hx+.17*s,hy+.42*s,hz,.045*s,GOLD);if(b) sp(hx,hy+.42*s,hz+.14*s,.045,'#e03a3a');break;}
   }
-  return bust?P.filter(p=>p.y>1.75):P;
+  return bust?P.filter(p=>p.y>1.5):P;
 }
 const _rgb={};
 function _hex(c){return _rgb[c]||(_rgb[c]=[parseInt(c.slice(1,3),16),parseInt(c.slice(3,5),16),parseInt(c.slice(5,7),16)]);}
@@ -2345,7 +2535,7 @@ const _pc={key:'',parts:null};
 function figCached(k,bust){const key=JSON.stringify(k)+(bust?'b':'');if(_pc.key!==key){_pc.key=key;_pc.parts=figParts(k,bust);}return _pc.parts;}
 function figDraw(cv,k,yaw,pitch,bust){
   const ctx=cv.getContext&&cv.getContext('2d');if(!ctx) return;
-  const W=cv.width,H=cv.height,sc=bust?H/1.25:H/3.3,cyy=bust?2.45:1.6;
+  const W=cv.width,H=cv.height,sc=bust?H/1.8:H/4.5,cyy=bust?2.3:2.1;
   const cY=Math.cos(yaw),sY=Math.sin(yaw),cP=Math.cos(pitch),sP=Math.sin(pitch);
   const rotN=(x,y,z)=>{const x1=x*cY+z*sY,z1=-x*sY+z*cY;return [x1,y*cP-z1*sP,y*sP+z1*cP];};
   const rot=(x,y,z)=>rotN(x,y-cyy,z);
@@ -2421,52 +2611,80 @@ const figCanvas=(src,w,h,o)=>{o=o||{};
 function charUser(){
   return findUser(ui.cu)||STORE.users.find(u=>u.cid&&u.cid===ACC.id)||STORE.users[0]||null;
 }
+const itemSlot=id=>(SLOTS.find(x=>id.startsWith(x[0]+':'))||['',''])[1];
+const rarTag=r=>`<span class="rtag" style="--rc:${RAR[r][1]}">${RAR[r][0]}</span>`;
+function shopCard(x,u){
+  const own=itemOwned(u.bp,x.id),price=PRICE[x.r],can=coinsOf(u.bp)>=price,[sl,val]=x.id.split(':');
+  const prev=Object.assign({},u.skin,{[sl]:val}),bust=sl==='hair'||sl==='hat'||sl==='glasses';
+  return `<div class="shopc" style="--rc:${RAR[x.r][1]}"><div class="shopf">${figCanvas(prev,bust?96:92,bust?96:124,{bust:bust?1:0})}</div>
+    <div class="shopn">${esc(x.n)}</div><div class="shops">${itemSlot(x.id)} ${rarTag(x.r)}</div>
+    ${own?`<div class="shopb own">Besitzt du</div>`:`<button class="shopb ${can?'':'no'}" data-act="shop-buy" data-v="${esc(x.id)}">🪙 ${price}</button>`}</div>`;
+}
 function renderChar(){
   const u=charUser();
-  if(!u){root.innerHTML=`<div class="wrap">${hdr('Charakter')}<div class="rules">Lege zuerst unter Profil → Statistik einen Benutzer an. Der Charakter und der Battle Pass gehören zu einem Benutzer.</div><button class="primary" data-act="go-stats">Zur Statistik</button></div>`;return;}
-  const lv=bpLevel(u.bp.pts),tab=ui.ctab==='pass'?'pass':'char';
+  if(!u){root.innerHTML=`<div class="wrap">${hdr('Charakter')}<div class="rules">Lege zuerst unter Profil → Statistik einen Benutzer an. Der Charakter, der Battle Pass und der Shop gehören zu einem Benutzer.</div><button class="primary" data-act="go-stats">Zur Statistik</button></div>`;return;}
+  const lv=bpLevel(u.bp.pts),tab=ui.ctab==='pass'||ui.ctab==='shop'?ui.ctab:'char';
   const users=STORE.users.length>1?`<div class="chips" style="margin-bottom:10px">${STORE.users.map(x=>`<button class="chip sm ${x.id===u.id?'on':''}" data-act="char-user" data-v="${esc(x.id)}">${esc(x.name)}</button>`).join('')}</div>`:'';
-  const bar=`<div class="bpbar"><div class="bpl"><b>Stufe ${lv.lvl}</b><span>${lv.max?'Höchste Stufe erreicht':lv.into+' / '+lv.need+' Punkte'}</span></div><div class="bpt"><i style="width:${lv.max?100:Math.round(lv.into/lv.need*100)}%"></i></div></div>`;
+  const bar=`<div class="bpbar"><div class="bpl"><b>Stufe ${lv.lvl}</b><span>${lv.max?'Höchste Stufe erreicht':lv.into+' / '+lv.need+' Punkte'}</span><span class="coins">🪙 ${coinsOf(u.bp)}</span></div><div class="bpt"><i style="width:${lv.max?100:Math.round(lv.into/lv.need*100)}%"></i></div></div>`;
   let body='';
   if(tab==='char'){
     const sw=(arr,key)=>arr.map(c=>`<button class="swatch ${u.skin[key]===c?'on':''}" style="background:${c}" data-act="skin-col" data-v="${key}:${c}" aria-label="Farbe ${c}"></button>`).join('')+`<label class="swatch pick" title="Eigene Farbe"><input type="color" data-skin="${key}" value="${u.skin[key]}">+</label>`;
-    const all=BASE_ITEMS.concat(BP_ITEMS,EVENT_ITEMS);
-    const total=BP_ITEMS.length+EVENT_ITEMS.length,have=BP_ITEMS.concat(EVENT_ITEMS).filter(x=>itemOwned(u.bp,x.id)).length;
+    const all=BASE_ITEMS.concat(BP_ITEMS,EVENT_ITEMS,SHOP_ITEMS);
+    const tot=BP_ITEMS.concat(EVENT_ITEMS,SHOP_ITEMS),have=tot.filter(x=>itemOwned(u.bp,x.id)).length;
     body=`<h2>Haarfarbe</h2><div class="swrow">${sw(HAIR_COLS,'hc')}</div>
       <h2>Hautfarbe</h2><div class="swrow">${sw(SKIN_COLS,'sc')}</div>
-      ${SLOTS.map(([sl,nm])=>`<h2>${nm}</h2><div class="chips">${all.filter(x=>x.id.startsWith(sl+':')&&itemOwned(u.bp,x.id)).map(x=>`<button class="chip sm ${u.skin[sl]===x.id.split(':')[1]?'on':''}" data-act="skin-set" data-v="${sl}:${x.id.split(':')[1]}">${esc(x.n)}</button>`).join('')}</div>`).join('')}
-      <div class="rules" style="margin-top:12px">Freigeschaltet: ${have} von ${total} Teilen. Neue Teile bekommst du im Battle Pass, und in „The 100“ als Monatsbelohnung.</div>`;
+      ${SLOTS.map(([sl,nm])=>`<h2>${nm}</h2><div class="chips">${all.filter(x=>x.id.startsWith(sl+':')&&itemOwned(u.bp,x.id)).map(x=>`<button class="chip sm rar ${u.skin[sl]===x.id.split(':')[1]?'on':''}" style="--rc:${RAR[x.r||0][1]}" data-act="skin-set" data-v="${sl}:${x.id.split(':')[1]}">${esc(x.n)}</button>`).join('')}</div>`).join('')}
+      <div class="rules" style="margin-top:12px">Gesammelt: ${have} von ${tot.length} Teilen. Neue Teile gibt es im Battle Pass, im Shop und in „The 100“ als Monatsbelohnung. Die Farbe unter dem Teil zeigt die Seltenheit.</div>`;
+  } else if(tab==='shop'){
+    const offer=shopToday();
+    body=`<h2>Heutiges Angebot</h2><div class="rules" style="margin-bottom:10px">Jeden Tag um 0:00 Uhr (deutsche Zeit) gibt es neue Teile. Coins verdienst du in „The 100“ (${H100_COINS} pro Teilnahme, dazu Monatspreise) und mit Stufenbelohnungen im Battle Pass.</div>
+      ${ui.shopMsg?`<div class="${ui.shopMsg.ok?'okmsg':'err'}" style="margin-bottom:10px">${esc(ui.shopMsg.t)}</div>`:''}
+      <div class="shopgrid">${offer.map(x=>shopCard(x,u)).join('')}</div>
+      <h2 style="margin-top:18px">Preise</h2><div class="rules">${RAR.map((r,i)=>`<span class="rtag" style="--rc:${r[1]}">${r[0]}</span> ${PRICE[i]} Coins`).join(' &nbsp; ')}</div>`;
   } else {
-    const rows=BP_ITEMS.map(x=>{
-      const got=x.lvl<=lv.lvl||u.bp.unl.includes(x.id),cur=x.lvl===lv.lvl+1;
-      return `<div class="bprow ${got?'got':''} ${cur?'next':''}"><span class="bpn">${x.lvl}</span><span class="bpi">${esc(x.n)}<small>${SLOTS.find(s=>x.id.startsWith(s[0]+':'))[1]}</small></span><span class="bps">${got?'✔':'🔒'}</span></div>`;
-    }).join('');
+    const cards=[];
+    for(let l=1;l<=BP_MAX;l++){
+      const x=BP_ITEMS.find(y=>y.lvl===l),got=l<=lv.lvl,co=bpCoin(l),r=x?x.r:0;
+      cards.push(`<div class="bpc ${got?'got':''} ${l===lv.lvl?'now':''}" style="--rc:${x?RAR[r][1]:'#6b7684'}"><div class="bpcn">Stufe ${l}</div>${x?`<div class="bpci">${esc(x.n)}</div><div class="bpcs">${itemSlot(x.id)}</div>${rarTag(r)}`:`<div class="bpci">Coins</div><div class="bpcs">Keine neue Kleidung</div>`}${co?`<div class="bpcc">+${co} 🪙</div>`:''}<div class="bpck">${got?'✔ erhalten':'🔒'}</div></div>`);
+    }
     const bw=u.bp.bw.map((v,i)=>`<div class="bprow ${v?'got':''}"><span class="bpn">${i+1}</span><span class="bpi">${esc(BOT_LEVELS[i].name)}<small>Sieg ${BP_WIN[i]} · Niederlage ${BP_LOSS[i]} Punkte</small></span><span class="bps">${v?'✔ +'+BP_FIRST:'+'+BP_FIRST}</span></div>`).join('');
-    body=`<h2>So sammelst du Punkte</h2><div class="rules">Jedes beendete Spiel gibt Punkte. Je stärker der Bot, desto mehr. Der erste Sieg gegen jeden Bot bringt einmalig ${BP_FIRST} Bonuspunkte. Spiele ohne Bot geben ${BP_HUMAN[0]} (Sieg) oder ${BP_HUMAN[1]} Punkte, höchstens ${BP_HUMAN_DAY} pro Tag. Die Teilnahme an „The 100“ bringt ${BP_H100} Punkte. Punkte fallen nie unter 0, und freigeschaltete Teile behältst du immer.</div>
+    body=`<h2>Belohnungen</h2><div class="rules" style="margin-bottom:8px">Nach links und rechts wischen. Stufe 1 bis 5 kosten je ${bpCost(1)} Punkte, danach wird jede Stufe um 20 Punkte teurer (höchstens ${bpCost(BP_MAX)}). Alle 5 Stufen gibt es Coins, ab Stufe 41 jede Stufe.</div>
+      <div class="bpscroll">${cards.join('')}</div>
+      <h2 style="margin-top:18px">So sammelst du Punkte</h2><div class="rules">Jedes beendete Spiel gibt Punkte. Je stärker der Bot, desto mehr. Der erste Sieg gegen jeden Bot bringt einmalig ${BP_FIRST} Bonuspunkte. Spiele ohne Bot geben ${BP_HUMAN[0]} (Sieg) oder ${BP_HUMAN[1]} Punkte, höchstens ${BP_HUMAN_DAY} pro Tag. Die Teilnahme an „The 100“ bringt ${BP_H100} Punkte. Punkte fallen nie unter 0, und freigeschaltete Teile behältst du immer.</div>
       <div class="bplist" style="margin-top:8px">${bw}</div>
-      <h2>Belohnungen</h2><div class="rules" style="margin-bottom:8px">Stufe 1 bis 5 kosten je ${bpCost(1)} Punkte, danach wird jede Stufe um 20 Punkte teurer.</div><div class="bplist">${rows}</div>
-      <h2>Monatsbelohnungen „The 100“</h2><div class="bplist">${EVENT_ITEMS.map(x=>`<div class="bprow ${u.bp.unl.includes(x.id)?'got':''}"><span class="bpn">★</span><span class="bpi">${esc(x.n)}<small>${x.rank===1?'Platz 1':'Platz 1 bis '+x.rank} der Monatswertung</small></span><span class="bps">${u.bp.unl.includes(x.id)?'✔':'🔒'}</span></div>`).join('')}</div>`;
+      <h2 style="margin-top:18px">Monatsbelohnungen „The 100“</h2><div class="bplist">${EVENT_ITEMS.map(x=>`<div class="bprow ${u.bp.unl.includes(x.id)?'got':''}" style="border-left:4px solid ${RAR[x.r][1]}"><span class="bpn">★</span><span class="bpi">${esc(x.n)}<small>${x.rank===1?'Platz 1':'Platz 1 bis '+x.rank} der Monatswertung · ${RAR[x.r][0]}</small></span><span class="bps">${u.bp.unl.includes(x.id)?'✔':'🔒'}</span></div>`).join('')}</div>
+      <div class="rules" style="margin-top:8px">Dazu gibt es Coins: Platz 1 ${MONTH_COINS[1]}, Platz 2 ${MONTH_COINS[2]}, Platz 3 ${MONTH_COINS[3]}.</div>`;
   }
+  const modal=ui.buy?(()=>{const x=SHOP_ITEMS.find(y=>y.id===ui.buy);if(!x) return '';return `<div class="modal"><div class="card"><h2>${esc(x.n)} kaufen?</h2><div style="text-align:center;margin:6px 0">${rarTag(x.r)}</div><p style="color:var(--muted);margin:0 0 14px;text-align:center">Das kostet ${PRICE[x.r]} Coins. Du hast ${coinsOf(u.bp)} Coins.</p><div class="row"><button class="ghost" data-act="shop-no">Abbrechen</button><button class="next" data-act="shop-yes">Kaufen</button></div></div></div>`;})():'';
   root.innerHTML=`<div class="wrap">${hdr('Charakter')}${users}
     <div class="figbox">${figCanvas(u.id,230,300,{spin:1})}<div class="figname">${esc(u.name)}</div><div class="figtip">Zum Drehen ziehen</div></div>
     ${bar}
-    <div class="chips" style="margin:12px 0 4px"><button class="chip ${tab==='char'?'on':''}" data-act="char-tab" data-v="char">Aussehen</button><button class="chip ${tab==='pass'?'on':''}" data-act="char-tab" data-v="pass">Battle Pass</button></div>
-    ${body}</div>`;
+    <div class="chips" style="margin:12px 0 4px"><button class="chip ${tab==='char'?'on':''}" data-act="char-tab" data-v="char">Aussehen</button><button class="chip ${tab==='pass'?'on':''}" data-act="char-tab" data-v="pass">Battle Pass</button><button class="chip ${tab==='shop'?'on':''}" data-act="char-tab" data-v="shop">Shop</button></div>
+    ${body}${modal}</div>`;
+}
+function bpScrollFix(){
+  try{
+    const c=root.querySelector('.bpscroll');if(!c) return;
+    if(ui.bpX==null){const n=c.querySelector('.now');if(n) c.scrollLeft=Math.max(0,n.offsetLeft-c.clientWidth/2+n.offsetWidth/2);}
+    else c.scrollLeft=ui.bpX;
+    c.addEventListener('scroll',()=>{ui.bpX=c.scrollLeft;},{passive:true});
+  }catch(e){}
 }
 
 /* ================= Untere Leiste (Tabs) ================= */
 const TAB_SCREENS=['home','modes','h100','char','me','stats','settings','profiles','account'];
-const TAB_OF=s=>({home:'home',modes:'modes',h100:'h100',char:'char'}[s]||'me');
+const TAB_OF=s=>({home:'home',modes:'modes',h100:'h100',char:'char',profiles:'players'}[s]||'me');
 const TAB_ICON={
   home:'<path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>',
   modes:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/>',
   char:'<path d="M8 3L3 6l2 4 3-1v12h8V9l3 1 2-4-5-3a4 4 0 0 1-8 0z"/>',
+  players:'<circle cx="9" cy="8" r="3"/><path d="M3 20c.5-3.5 3-5 6-5s5.5 1.5 6 5"/><circle cx="17" cy="9" r="2.4"/><path d="M16.5 14.2c2.6-.2 4.2 1.2 4.5 4.3"/>',
   me:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="10" r="3"/><path d="M6.5 18.5c1.5-2.5 3.2-3.5 5.5-3.5s4 1 5.5 3.5"/>'
 };
 function tabbar(){
   const cur=TAB_OF(ui.screen);
   const b=(id,label)=>`<button class="tb ${cur===id?'on':''}" data-act="tab" data-v="${id}" aria-label="${label}"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${TAB_ICON[id]}</svg><span>${label}</span></button>`;
-  return `<nav class="tabbar"><div class="tabin">${b('home','Start')}${b('modes','Spiele')}<button class="tb mid ${cur==='h100'?'on':''}" data-act="tab" data-v="h100" aria-label="The 100"><i>100</i><span>The 100</span></button>${b('char','Charakter')}${b('me','Profil')}</div></nav>`;
+  return `<nav class="tabbar"><div class="tabin">${b('home','Start')}${b('modes','Spiele')}<button class="tb mid ${cur==='h100'?'on':''}" data-act="tab" data-v="h100" aria-label="The 100"><i>100</i><span>The 100</span></button>${b('char','Charakter')}${b('players','Spieler')}${b('me','Profil')}</div></nav>`;
 }
 function renderMe(){
   const u=charUser(),lv=u?bpLevel(u.bp.pts).lvl:0;
@@ -2474,9 +2692,8 @@ function renderMe(){
   root.innerHTML=`<div class="wrap">${hdr('Profil')}${banner()}
     <div class="medit">${u?figCanvas(u.skin,64,64,{bust:1}):''}<div><b>${u?esc(u.name):'Noch kein Benutzer'}</b><small>${u?'Battle Pass Stufe '+lv:'Lege unter Statistik einen Benutzer an'}${cloudOn()?(ACC.token?' · Konto: '+esc(ACC.name):' · nicht angemeldet'):''}</small></div></div>
     ${row('go-stats','Statistik','Deine Zahlen, Verlauf und Feldstatistik')}
-    ${row('go-profiles','Öffentliche Profile','Statistiken anderer Spieler ansehen')}
     ${row('go-settings','Einstellungen','Ansage, Spracheingabe und Design')}
-    ${row('go-account','Konto und Server',cloudOn()?(ACC.token?'Angemeldet als '+esc(ACC.name):'Anmelden oder registrieren'):'Server einrichten')}
+    ${row('go-account','Konto',cloudOn()?(ACC.token?'Angemeldet als '+esc(ACC.name):'Konto erstellen oder anmelden'):'Noch nicht freigeschaltet')}
     ${row('join-open','Raum beitreten','Mit einem Code online mitspielen')}</div>`;
 }
 
@@ -2508,8 +2725,12 @@ async function h100Rewards(){
     const r=await rpc('dart100_rewards',{p_token:ACC.token}),u=STORE.users.find(x=>x.cid&&x.cid===ACC.id);
     if(!u||!r||!Array.isArray(r.rewards)) return;
     const added=[];
-    r.rewards.forEach(w=>EVENT_ITEMS.filter(x=>w.rank<=x.rank).forEach(x=>{if(!u.bp.unl.includes(x.id)){u.bp.unl.push(x.id);added.push(x.n);}}));
-    if(added.length){saveStore();cloudPushSoon();H100.rew='Neue Monatsbelohnung: '+added.join(', ')+'. Du findest sie unter Charakter.';if(ui.screen==='h100') render();}
+    let coins=0;
+    r.rewards.forEach(w=>{
+      EVENT_ITEMS.filter(x=>w.rank<=x.rank).forEach(x=>{if(!u.bp.unl.includes(x.id)){u.bp.unl.push(x.id);added.push(x.n);}});
+      if(typeof w.month==='string'&&!u.bp.mr.includes(w.month)&&MONTH_COINS[w.rank]){u.bp.mr.push(w.month);u.bp.ce+=MONTH_COINS[w.rank];coins+=MONTH_COINS[w.rank];}
+    });
+    if(added.length||coins){saveStore();cloudPushSoon();H100.rew='Neue Monatsbelohnung: '+(added.length?added.join(', ')+(coins?' und ':''):'')+(coins?coins+' Coins':'')+'. Du findest sie unter Charakter.';if(ui.screen==='h100') render();}
   }catch(e){}
 }
 async function h100Start(){
@@ -2537,7 +2758,7 @@ async function h100Submit(){
     H100.res={kind:run.kind,score:r.score,darts:r.darts,secs:r.secs};
     H100.run=null;h100Save();
     const u=STORE.users.find(x=>x.cid&&x.cid===ACC.id);
-    if(u){bpAdd(u.bp,BP_H100);saveStore();cloudPushSoon();}
+    if(u){bpAdd(u.bp,BP_H100);u.bp.ce+=H100_COINS;saveStore();cloudPushSoon();}
     H100.busy=false;await h100Load();
   }catch(e){run.err=e.message;if(/Ungültig|bad_result|schnell|abgelaufen|bereits|expired/i.test(e.message)) run.fatal=true;}
   H100.busy=false;render();
@@ -2588,7 +2809,7 @@ function renderH100(){
     else if(st.state==='before') act=`<div class="note" style="text-align:left">Starten kannst du ab ${esc(st.opens_txt)} Uhr.</div>`;
     body=`${H100.rew?`<div class="gain">${esc(H100.rew)}</div>`:''}
       <div class="h1card"><div class="h1name">${esc(k[0])}</div><div class="h1desc">${esc(k[1])}</div>${state}</div>
-      ${H100.res?`<div class="gain">Ergebnis abgegeben: <b>${h100Res(H100.res.kind,H100.res)}</b>. Dazu gibt es ${BP_H100} Battle-Pass-Punkte.</div>`:''}
+      ${H100.res?`<div class="gain">Ergebnis abgegeben: <b>${h100Res(H100.res.kind,H100.res)}</b>. Dazu gibt es ${BP_H100} Battle-Pass-Punkte und ${H100_COINS} Coins.</div>`:''}
       ${act}${H100.err?`<div class="err" style="margin-top:8px">${esc(H100.err)}</div>`:''}
       <div class="chips" style="margin:16px 0 8px"><button class="chip ${H100.tab==='day'?'on':''}" data-act="h100-tab" data-v="day">Heute</button><button class="chip ${H100.tab==='month'?'on':''}" data-act="h100-tab" data-v="month">Monatswertung</button><button class="chip sm" data-act="h100-reload" aria-label="Aktualisieren">↻</button></div>
       ${h100Board(st)}
@@ -2623,6 +2844,7 @@ function renderH100Play(){
 
 function renderHome(){
   const c=ui.cfg,n=STORE.users.length;
+  if(cloudOn()&&PROF.list===null&&!PROF.loading&&!PROF.tried){PROF.tried=true;setTimeout(profLoadList,50);}
   root.innerHTML=`<div class="wrap home">
     <div class="brand">${LOGO}<div class="bt"><b>Dart Scorer</b><span>Punkte, Statistik und Online-Spiel</span></div>
       ${cloudOn()?`<button class="acc" data-act="go-account">${ACC.token?'👤 '+esc(ACC.name):'Anmelden'}</button>`:''}</div>
@@ -2632,6 +2854,7 @@ function renderHome(){
     <div class="tiles">
       <button class="tile" data-act="tab" data-v="h100"><b>The 100</b><small>Tägliche Challenge mit Rangliste</small></button>
       <button class="tile" data-act="tab" data-v="char"><b>Charakter</b><small>${(()=>{const u=charUser();return u?'Battle Pass · Stufe '+bpLevel(u.bp.pts).lvl:'Skin und Battle Pass';})()}</small></button>
+      <button class="tile wide" data-act="tab" data-v="players"><b>Spieler und Profile</b><small>${cloudOn()?(PROF.list&&PROF.list.length?PROF.list.length+' öffentliche Profile ansehen':'Statistiken anderer Spieler ansehen'):'Statistiken anderer Spieler (braucht einen Server)'}</small>${PROF.list&&PROF.list.length?`<span class="pavs">${PROF.list.slice(0,6).map(p=>figCanvas(normSkin(p.skin),34,34,{bust:1})).join('')}</span>`:''}</button>
       <button class="tile" data-act="go-stats"><b>Statistik</b><small>${n?n+' Benutzer':'Benutzer anlegen'}</small></button>
       <button class="tile" data-act="join-open"><b>Raum beitreten</b><small>Mit Code online spielen</small></button>
     </div></div>`;
@@ -2684,51 +2907,110 @@ function renderAccount(){
   const msgs=`${ACC.err?`<div class="err">${esc(ACC.err)}</div>`:''}${ACC.msg?`<div class="okmsg">${esc(ACC.msg)}</div>`:''}`;
   let body='';
   if(!cloudOn()){
-    body=`<div class="rules">Für Konten, Online-Statistiken und öffentliche Profile brauchst du einen kostenlosen Server bei Supabase. Die Einrichtung dauert etwa 10 Minuten und steht in der Datei <b>SERVER-EINRICHTUNG.txt</b>. Danach trägst du hier die Projekt-Adresse und den öffentlichen Schlüssel („Publishable key“) ein, oder du schreibst sie in die Datei <b>config.js</b>.</div>
+    body=`<div class="rules"><b>Konten sind in dieser App noch nicht freigeschaltet.</b><br>Dafür braucht die App einen Server, den der Betreiber der App einmalig einträgt (siehe Datei <b>SERVER-EINRICHTUNG.txt</b>). Solange das fehlt, kannst du hier kein Konto anlegen und dich nirgends anmelden. Alles andere funktioniert ohne Konto.</div>
+      <details class="adv"><summary>Ich bin der Betreiber: Server eintragen</summary>
+      <div class="rules" style="margin:8px 0">Trage hier die Projekt-Adresse und den öffentlichen Schlüssel („Publishable key“) deines Supabase-Projekts ein. Besser ist es, beides in die Datei <b>config.js</b> zu schreiben, dann gilt es für alle Spieler.</div>
       ${inp('cfgUrl','Projekt-Adresse (https://….supabase.co)','text','inputmode="url"')}${inp('cfgKey','Öffentlicher Schlüssel (Publishable key)','text')}
-      <button class="primary" data-act="cfg-save">Server verbinden</button>${msgs}`;
+      <button class="primary" data-act="cfg-save">Server verbinden</button>${msgs}</details>`;
   } else if(!ACC.token){
     const reg=ACC.tab==='register';
-    body=`<div class="chips" style="margin-bottom:12px"><button class="chip ${reg?'':'on'}" data-act="acc-tab" data-v="login">Anmelden</button><button class="chip ${reg?'on':''}" data-act="acc-tab" data-v="register">Neues Konto</button></div>
+    body=`<div class="rules">Mit einem Konto wird deine Statistik online gespeichert, du kannst bei „The 100“ mitmachen und von jedem Gerät aus weiterspielen.</div>
+      <div class="accsw"><button class="${reg?'':'on'}" data-act="acc-tab" data-v="login"><b>Ich habe ein Konto</b><small>Anmelden</small></button><button class="${reg?'on':''}" data-act="acc-tab" data-v="register"><b>Ich bin neu</b><small>Konto erstellen</small></button></div>
+      ${reg?`<ol class="steps"><li>Wähle einen Namen. Den sehen andere Spieler.</li><li>Wähle eine PIN aus 6 Ziffern und merke sie dir.</li><li>Tippe auf „Konto erstellen“. Du bist danach sofort angemeldet.</li></ol>`:`<ol class="steps"><li>Gib den Namen deines Kontos ein.</li><li>Gib deine PIN aus 6 Ziffern ein.</li><li>Tippe auf „Anmelden“.</li></ol>`}
       ${inp('name2','Name (2 bis 16 Zeichen)','text','maxlength="16"')}${pin('pin','PIN (6 Ziffern)')}${reg?pin('pin2','PIN wiederholen'):''}
-      <button class="primary" data-act="${reg?'acc-register':'acc-login'}" ${ACC.busy?'disabled':''}>${ACC.busy?'Bitte warten …':reg?'Konto anlegen':'Anmelden'}</button>${msgs}
-      <div class="rules" style="margin-top:12px">${reg?'Wähle eine PIN, die du dir merkst. Sie wird nur als Hash gespeichert. Ein Administrator kann sie bei Verlust zurücksetzen.':'Nach 5 falschen PINs ist das Konto für 15 Minuten gesperrt.'}</div>
-      <button class="ghost sm" style="margin-top:10px" data-act="cfg-clear">Server-Verbindung entfernen</button>`;
+      <button class="primary" data-act="${reg?'acc-register':'acc-login'}" ${ACC.busy?'disabled':''}>${ACC.busy?'Bitte warten …':reg?'Konto erstellen':'Anmelden'}</button>${msgs}
+      <div class="rules" style="margin-top:12px">${reg?'Die PIN wird nur als Hash gespeichert. Bei Verlust kann ein Administrator sie zurücksetzen.':'Nach 5 falschen PINs ist das Konto für 15 Minuten gesperrt.'}</div>
+      <details class="adv" style="margin-top:12px"><summary>Server-Verbindung</summary><button class="ghost sm" style="margin-top:8px" data-act="cfg-clear">Server-Verbindung entfernen</button></details>`;
   } else {
-    const u=STORE.users.find(x=>x.cid===ACC.id);
+    const u=STORE.users.find(x=>x.cid===ACC.id),others=STORE.users.filter(x=>x.cid&&x.cid!==ACC.id&&x.ctok);
     body=`<div class="ucard"><div class="uhead"><b>👤 ${esc(ACC.name)}</b></div>
-      <div class="sline">Dein Profil ist <b>${ACC.pub?'öffentlich':'privat'}</b>.${ACC.pub?' Andere sehen Statistik und letzte Spiele.':' Nur du siehst deine Statistik.'}</div>
-      <div class="row" style="margin-top:10px"><button class="ghost" data-act="acc-pub" data-v="${ACC.pub?0:1}" ${ACC.busy?'disabled':''}>${ACC.pub?'Auf privat stellen':'Öffentlich machen'}</button><button class="ghost" data-act="acc-sync" ${ACC.busy?'disabled':''}>Jetzt synchronisieren</button></div>
-      <h2 style="margin-top:18px">Letzte Spiele</h2>${gamesList(u?u.games:[])}</div>
+      <div class="sline">Du bist angemeldet. Dein Profil ist <b>${ACC.pub?'öffentlich':'privat'}</b>.${ACC.pub?' Andere sehen Statistik und letzte Spiele unter „Spieler“.':' Nur du siehst deine Statistik.'}</div>
+      <div class="row" style="margin-top:10px"><button class="ghost" data-act="acc-pub" data-v="${ACC.pub?0:1}" ${ACC.busy?'disabled':''}>${ACC.pub?'Auf privat stellen':'Öffentlich machen'}</button><button class="ghost" data-act="acc-sync" ${ACC.busy?'disabled':''}>Jetzt synchronisieren</button></div></div>
       ${msgs}
+      <h2>Weitere Spieler an diesem Gerät</h2>
+      <div class="rules">Wenn ein Freund mit eigenem Konto an deinem Handy mitspielt, melde sein Konto hier an. Seine Würfe zählen dann für seine eigene Statistik. Du kannst ihn auch direkt im Spiel beim Spieler auswählen („Mit Konto anmelden …“).</div>
+      ${others.map(x=>`<div class="ucard" style="margin-top:8px"><div class="uhead"><b>👤 ${esc(x.name)}</b><div class="btns"><button class="ghost sm" data-act="acc-unlink" data-v="${esc(x.id)}">Abmelden</button></div></div></div>`).join('')}
+      <button class="ghost" style="margin-top:8px" data-act="aa-open">＋ Weiteres Konto anmelden</button>
+      ${ACC.admin?`<h2>Administration</h2><button class="primary" data-act="go-admin">Admin-Bereich öffnen</button>`:''}
+      <h2>Letzte Spiele</h2>${gamesList(u?u.games:[])}
       <h2>PIN ändern</h2>${pin('oldpin','Alte PIN')}${pin('pin','Neue PIN')}
       <button class="ghost" data-act="acc-pin" ${ACC.busy?'disabled':''}>PIN ändern</button>
       <button class="ghost danger" style="width:100%;margin-top:18px" data-act="acc-logout">Abmelden</button>`;
   }
-  root.innerHTML=`<div class="wrap">${hdr('Konto','go-me')}${body}</div>`;
+  root.innerHTML=`<div class="wrap">${hdr(ACC.token?'Konto':'Konto erstellen oder anmelden','go-me')}${body}${aaModal()}</div>`;
+}
+const PROF_Q={q:''};
+/* ================= Administration ================= */
+const ADM={list:null,loading:false,err:'',msg:'',q:'',ask:null,busy:false};
+async function admLoad(){
+  if(ADM.loading||!ACC.token) return;
+  ADM.loading=true;ADM.err='';render();
+  try{ADM.list=await rpc('dart_admin_list',{p_token:ACC.token,p_q:ADM.q||''})||[];}catch(e){ADM.err=e.message;ADM.list=ADM.list||[];}
+  ADM.loading=false;render();
+}
+const ADM_ACT={reset:['dart_admin_reset_stats','Statistik löschen und Upload sperren','Die Statistik, der Verlauf und die letzten Spiele werden gelöscht. Das Gerät dieses Spielers kann sie nicht mehr hochladen.'],
+  unfreeze:['dart_admin_unfreeze','Sperre aufheben','Der Spieler kann wieder Statistik hochladen.'],
+  h100:['dart_admin_delete_h100','„The 100“-Ergebnisse löschen','Alle Ergebnisse dieses Spielers aus „The 100“ verschwinden aus den Ranglisten.'],
+  del:['dart_admin_delete_player','Konto ganz löschen','Das Konto mit allen Daten wird endgültig gelöscht. Der Name wird wieder frei.']};
+async function admDo(){
+  const k=ADM.ask;if(!k||ADM.busy) return;
+  const [id,kind]=k;ADM.ask=null;ADM.busy=true;ADM.err='';ADM.msg='';render();
+  try{await rpc(ADM_ACT[kind][0],{p_token:ACC.token,p_id:id});ADM.msg='Erledigt: '+ADM_ACT[kind][1]+'.';ADM.busy=false;await admLoad();return;}
+  catch(e){ADM.err=e.message;}
+  ADM.busy=false;render();
+}
+function admSuspect(p){
+  const x=(p.stats&&p.stats.x01)||{},avg=x.darts?x.pts/x.darts*3:0,co=x.dAtt?x.dHit/x.dAtt:0,out=[];
+  if(x.games>=3&&avg>=100) out.push('Ø '+avg.toFixed(0));
+  if(x.dAtt>=10&&co>=.7) out.push('Checkout '+Math.round(co*100)+'%');
+  if(x.hi>=180&&x.games<=2) out.push('180 in '+x.games+' Spielen');
+  return out;
+}
+function renderAdmin(){
+  if(!ACC.admin){root.innerHTML=`<div class="wrap">${hdr('Administration','go-account')}<div class="err">Dafür brauchst du Admin-Rechte.</div></div>`;return;}
+  const rows=(ADM.list||[]).map(p=>({p,sus:admSuspect(p)})).sort((a,b)=>(b.sus.length>0)-(a.sus.length>0)||String(a.p.name).toLowerCase().localeCompare(String(b.p.name).toLowerCase()));
+  const card=({p,sus})=>{
+    const x=(p.stats&&p.stats.x01)||{},n=totalGames(p.stats);
+    return `<div class="ucard ${sus.length?'sus':''}"><div class="uhead"><b>${esc(p.name)}</b><span class="pillrow">${p.public?'<span class="rtag" style="--rc:#3ddc97">öffentlich</span>':'<span class="rtag" style="--rc:#8da2c5">privat</span>'}${p.frozen?'<span class="rtag" style="--rc:#e5484d">gesperrt</span>':''}${p.admin?'<span class="rtag" style="--rc:#f0b429">Admin</span>':''}</span></div>
+      <div class="sline">${n} Spiele · X01 Ø ${avgOf(x.pts||0,x.darts||0)} · Checkout ${pct(x.dHit||0,x.dAtt||0)} · Beste Aufnahme ${x.hi||0}<br>„The 100“: ${p.h100||0} Teilnahmen</div>
+      ${sus.length?`<div class="err" style="margin:6px 0">Auffällig: ${sus.map(esc).join(' · ')}</div>`:''}
+      <div class="admbtns"><button class="ghost sm" data-act="adm-ask" data-v="${esc(p.id)}:reset">Statistik löschen</button>${p.frozen?`<button class="ghost sm" data-act="adm-ask" data-v="${esc(p.id)}:unfreeze">Sperre aufheben</button>`:''}<button class="ghost sm" data-act="adm-ask" data-v="${esc(p.id)}:h100">The 100 löschen</button>${p.id!==ACC.id?`<button class="ghost sm danger" data-act="adm-ask" data-v="${esc(p.id)}:del">Konto löschen</button>`:''}</div></div>`;
+  };
+  let modal='';
+  if(ADM.ask){const p=(ADM.list||[]).find(x=>x.id===ADM.ask[0]),k=ADM_ACT[ADM.ask[1]];modal=`<div class="modal"><div class="card"><h2>${esc(k[1])}?</h2><p style="color:var(--muted);margin:0 0 14px"><b>${esc(p?p.name:'')}</b><br>${esc(k[2])}</p><div class="row"><button class="ghost" data-act="adm-no">Abbrechen</button><button class="next" data-act="adm-yes">Ja, ausführen</button></div></div></div>`;}
+  root.innerHTML=`<div class="wrap">${hdr('Administration','go-account',`<button class="ghost sm" data-act="adm-reload">↻</button>`)}
+    <div class="rules">Hier siehst du alle Konten, auch private. Auffällige Werte stehen oben. Gelöscht wird erst nach deiner Bestätigung.</div>
+    <div class="newrow" style="margin:10px 0"><input type="search" data-adm="q" placeholder="Name suchen" value="${esc(ADM.q)}" autocomplete="off"><button class="ghost" data-act="adm-reload">Suchen</button></div>
+    ${ADM.err?`<div class="err" style="margin-bottom:8px">${esc(ADM.err)}</div>`:''}${ADM.msg?`<div class="okmsg" style="margin-bottom:8px">${esc(ADM.msg)}</div>`:''}
+    ${ADM.list===null||ADM.loading?`<div class="note">Wird geladen …</div>`:rows.length?rows.map(card).join(''):`<div class="note">Keine Konten gefunden.</div>`}${modal}</div>`;
 }
 function renderProfiles(){
   let body='';
   if(!cloudOn()){
-    body=`<div class="rules">Öffentliche Profile gibt es, sobald ein Server verbunden ist. Die Einrichtung findest du unter Einstellungen → Konto und Server.</div><button class="ghost" data-act="go-account" style="margin-top:8px">Server einrichten</button>`;
+    body=`<div class="rules">Die Profile anderer Spieler gibt es, sobald in der App ein Server eingetragen ist. Das macht der Betreiber der App einmalig (siehe SERVER-EINRICHTUNG.txt).</div>`;
   } else if(PROF.open&&PROF.data[PROF.open]){
     const u=PROF.data[PROF.open];
     body=`<div class="figbox">${figCanvas(u.skin,170,220,{spin:1})}<div class="figname">${esc(u.name)}</div><div class="figtip">Battle Pass Stufe ${u.lvl}</div></div><div class="ucard"><div class="uhead"><b>${esc(u.name)}</b><div class="btns"><button class="ghost sm" data-act="chartuser" data-v="${esc(u.id)}">${ui.chartUser===u.id?'Verlauf zu':'📈 Verlauf'}</button><button class="ghost sm" data-act="fv-user" data-v="${esc(u.id)}">🎯 Feldstatistik</button></div></div>
       ${statGrid(u)}${ui.chartUser===u.id?chartPanel(u):''}<h2 style="margin-top:16px">Letzte Spiele</h2>${gamesList(u.games)}</div>
-      <button class="ghost" data-act="prof-back">‹ Alle Profile</button>`;
+      <button class="ghost" data-act="prof-back">‹ Alle Spieler</button>`;
   } else if(PROF.open){
     body=`<div class="note">Profil wird geladen …</div>`;
-  } else if(PROF.list===null){
-    body=PROF.loading?`<div class="note">Profile werden geladen …</div>`:`<button class="ghost" data-act="prof-refresh">Profile laden</button>`;
-  } else if(!PROF.list.length){
-    body=`<div class="rules">Noch hat niemand sein Profil öffentlich gemacht. Du kannst das unter Konto selbst tun.</div>`;
   } else {
-    body=PROF.list.map(p=>{const x=p.x01||{};return `<button class="mrow" data-act="prof-open" data-v="${esc(p.id)}"><span class="mn">${esc(p.name)}</span><span class="md">${x.games||0} Spiele · Ø ${avgOf(x.pts||0,x.darts||0)} · Checkout ${pct(x.dHit||0,x.dAtt||0)}</span><span class="mc">›</span></button>`;}).join('');
+    const mine=ACC.token?`<div class="ucard" style="margin-bottom:12px"><div class="sline">${ACC.pub?'Dein Profil ist <b>öffentlich</b>. Andere Spieler sehen es hier.':'Dein Profil ist <b>privat</b>. Mach es öffentlich, damit andere deine Statistik und deinen Charakter sehen.'}</div><button class="ghost" style="margin-top:8px" data-act="acc-pub" data-v="${ACC.pub?0:1}">${ACC.pub?'Auf privat stellen':'Profil öffentlich machen'}</button></div>`
+      :`<div class="ucard" style="margin-bottom:12px"><div class="sline">Mit einem Konto kannst du dein eigenes Profil hier zeigen.</div><button class="ghost" style="margin-top:8px" data-act="go-account">Konto erstellen oder anmelden</button></div>`;
+    let list='';
+    if(PROF.list===null) list=PROF.loading?`<div class="note">Profile werden geladen …</div>`:`<button class="ghost" data-act="prof-refresh">Profile laden</button>`;
+    else {
+      const q=PROF_Q.q.trim().toLowerCase(),rows=PROF.list.filter(p=>!q||String(p.name).toLowerCase().includes(q));
+      list=!PROF.list.length?`<div class="rules">Noch hat niemand sein Profil öffentlich gemacht.</div>`
+        :`<input type="search" class="pq" data-pq="1" placeholder="Spieler suchen" value="${esc(PROF_Q.q)}" autocomplete="off">`
+          +(rows.length?rows.map(p=>{const x=p.x01||{};return `<button class="mrow prow" data-act="prof-open" data-v="${esc(p.id)}"><span class="pav">${figCanvas(normSkin(p.skin),44,44,{bust:1})}</span><span class="pm"><span class="mn">${esc(p.name)}</span><span class="md">${x.games||0} Spiele · Ø ${avgOf(x.pts||0,x.darts||0)} · Checkout ${pct(x.dHit||0,x.dAtt||0)}</span></span><span class="mc">›</span></button>`;}).join(''):`<div class="note">Kein Spieler gefunden.</div>`);
+    }
+    body=mine+list;
   }
-  root.innerHTML=`<div class="wrap">${hdr('Profile','go-me',cloudOn()&&!PROF.open?`<button class="ghost sm" data-act="prof-refresh">↻</button>`:'')}
+  root.innerHTML=`<div class="wrap">${hdr('Spieler','',cloudOn()&&!PROF.open?`<button class="ghost sm" data-act="prof-refresh">↻</button>`:'')}
     ${PROF.err?`<div class="err" style="margin-bottom:8px">${esc(PROF.err)}</div>`:''}${body}${fieldModal()}</div>`;
 }
-
 
 function renderSetup(){
   const c=ui.cfg;
@@ -2772,6 +3054,7 @@ function renderSetup(){
     <div class="rules" style="margin-top:14px">Ansage: <b>${c.caller?'an':'aus'}</b> · Spracheingabe: <b>${c.voice==='offline'?'offline':'Browser'}</b> <button class="ghost sm" style="margin-left:6px" data-act="go-settings">Ändern</button></div>
     <button class="primary" data-act="${hasRemote?'host-open':'start'}">${hasRemote?'🌐 Raum erstellen':'Spiel starten'}</button>
     <button class="ghost" style="width:100%;margin-top:10px" data-act="join-open">🌐 Raum beitreten</button>
+    ${aaModal()}
   </div>`;
 }
 
@@ -3038,7 +3321,8 @@ function renderGame(){
   const slots=[0,1,2].map(i=>{
     const d=g.turn[i];
     if(!d) return `<div class="slot empty"><div class="l">–</div><div class="v"></div></div>`;
-    return `<div class="slot ${d.void?'void':''} ${d.bust?'bust':''}"><div class="l">${lbl(d)}</div><div class="v">${x?(d.void?'zählt nicht':fmt(d)):''}</div></div>`;
+    const tap=(g.phase==='throw'||g.phase==='review')&&!watch;
+    return `<div class="slot ${d.void?'void':''} ${d.bust?'bust':''} ${tap?'tap':''} ${ui.edit===i&&tap?'edit':''}" ${tap?`data-act="dart-edit" data-v="${i}"`:''}><div class="l">${lbl(d)}</div><div class="v">${x?(d.void?'zählt nicht':fmt(d)):''}</div></div>`;
   }).join('');
 
   const review=g.phase==='review',bull=g.phase==='bull',kpick=g.phase==='kpick';
@@ -3047,7 +3331,8 @@ function renderGame(){
   else if(kpick) msg=watch?`${esc(p.name)} wählt eine Zahl …`:`${esc(p.name)}: wirf auf eine freie Zahl (1–20)`;
   else if(g.bust){msg='BUST – Punktestand zurückgesetzt';cls='bad';}
   else if(g.checked){msg=`✔ Checkout! Ziel ${p.target} geschafft`;cls='good';}
-  else if(review) msg=watch?`${esc(p.name)}: Aufnahme beendet`:'Darts ziehen, dann „Weiter“';
+  else if(ui.edit!=null&&(g.phase==='throw'||review)&&!watch) msg=`Wurf ${ui.edit+1} ändern: neuen Wurf eingeben`;
+  else if(review) msg=watch?`${esc(p.name)}: Aufnahme beendet`:(g.cfg.auto&&HOLD.ms>0?'Bitte prüfen – gleich geht es weiter. Zum Ändern auf einen Wurf tippen.':'Darts ziehen, dann „Weiter“');
   else if(g.phase==='throw'){
     msg=watch?`${esc(p.name)} wirft …`:`${esc(p.name)} ist dran`;
     if(r121) msg+=` · Aufnahme ${p.turnNo+1}/3`;
@@ -3055,7 +3340,7 @@ function renderGame(){
   }
   const routes=routesHTML(g,p);
   const camTab=ui.input==='cam'&&!bull&&!watch&&g.phase!=='bullwin';
-  const inputOff=!camTab&&(['review','legover','over','bullwin'].includes(g.phase)||!!watch);
+  const inputOff=!camTab&&(['review','legover','over','bullwin'].includes(g.phase)||!!watch)&&!(g.phase==='review'&&ui.edit!=null&&!watch);
   let inputBody;
   if(bull) inputBody=`<div class="bwrap">${boardSVG(g.marks)}</div>${bullBtns()}`;
   else if(camTab) inputBody=camPanel();
@@ -3123,9 +3408,10 @@ function schedule(){
   else if(ph==='kpick'&&bot) go(700,botPick);
   else if(ph==='throw'&&bot) go(G.turn.length?650:800,botThrow);
   else if(ph==='review'&&bot) go(1000,nextPlayer);
+  else if(ph==='review'&&!bot&&G.cfg.auto&&HOLD.ms>0&&ui.edit==null) go(HOLD.ms,()=>{const was=NET.applying;NET.applying=true;try{nextPlayer();}finally{NET.applying=was;}});
 }
 function render(){
-  ({home:renderHome,modes:renderModes,setup:renderSetup,settings:renderSettings,account:renderAccount,profiles:renderProfiles,stats:renderStats,char:renderChar,h100:renderH100,me:renderMe,lobby:renderLobby,join:renderJoin}[ui.screen]||renderGame)();
+  ({home:renderHome,modes:renderModes,setup:renderSetup,settings:renderSettings,account:renderAccount,admin:renderAdmin,profiles:renderProfiles,stats:renderStats,char:renderChar,h100:renderH100,me:renderMe,lobby:renderLobby,join:renderJoin}[ui.screen]||renderGame)();
   try{if(document.documentElement&&document.documentElement.setAttribute) document.documentElement.setAttribute('data-theme',themeOf(ui.cfg.theme));}catch(e){}
   netSync();
   if(typeof document!=='undefined'&&document.body&&document.body.classList) document.body.classList.toggle('gamemode',ui.screen==='game');
@@ -3135,6 +3421,7 @@ function render(){
   if(showTabs) root.innerHTML+=tabbar();
   try{document.body.classList.toggle('tabs',showTabs);}catch(e){}
   if(ui.screen==='h100') h100Tick();
+  if(ui.screen==='char') bpScrollFix();
   figKick();
   schedule();
 }
@@ -3200,7 +3487,7 @@ root.addEventListener('click',e=>{
   else if(a==='go-modes'){ui.screen='modes';}
   else if(a==='go-char'){ui.screen='char';}
   else if(a==='go-me'){ui.screen='me';}
-  else if(a==='tab'){ui.screen=v;ui.editUser=null;ui.fv=null;if(v==='h100') h100Load();}
+  else if(a==='tab'){ui.screen=v==='players'?'profiles':v;ui.editUser=null;ui.fv=null;if(v==='h100') h100Load();if(v==='players'){PROF.open=null;PROF.err='';if(cloudOn()&&PROF.list===null) profLoadList();}}
   else if(a==='h100-reload'){h100Load();}
   else if(a==='h100-tab'){H100.tab=v;}
   else if(a==='h100-start'){h100Start();return;}
@@ -3210,13 +3497,25 @@ root.addEventListener('click',e=>{
   else if(a==='h100-undo'){if(H100.run&&H100.run.res.length&&!H100.busy){H100.run.res.pop();H100.run.err='';H100.run.fatal=false;h100Save();}}
   else if(a==='h100-send'){h100Submit();return;}
   else if(a==='h100-leave'){H100.run=null;H100.err='';h100Load();}
-  else if(a==='char-tab'){ui.ctab=v;}
+  else if(a==='char-tab'){ui.ctab=v;ui.shopMsg=null;ui.buy=null;}
+  else if(a==='shop-buy'){ui.buy=v;}
+  else if(a==='shop-no'){ui.buy=null;}
+  else if(a==='shop-yes'){const u=charUser(),id=ui.buy;ui.buy=null;if(u&&id){const e=shopBuy(u,id);if(e) ui.shopMsg={ok:0,t:e};else{saveStore();cloudPushSoon();ui.shopMsg={ok:1,t:ITEM_NAME[id]+' gekauft. Du findest es unter „Aussehen“.'};}}}
   else if(a==='char-user'){ui.cu=v;}
   else if(a==='skin-set'){const u=charUser();const [sl,id]=String(v).split(':');if(u&&itemOwned(u.bp,sl+':'+id)){u.skin[sl]=id;saveStore();}}
   else if(a==='skin-col'){const u=charUser();const [sl,c]=String(v).split(':');if(u&&(sl==='hc'||sl==='sc')&&hexOk(c)){u.skin[sl]=c;saveStore();}}
   else if(a==='pick-mode'){ui.cfg.mode=v;if(v==='killer'&&ui.cfg.players<2)ui.cfg.players=2;saveSetup();ui.screen='setup';}
   else if(a==='go-settings'){ui.screen='settings';ui.msg='';}
-  else if(a==='go-account'){ui.screen='account';ACC.err='';ACC.msg='';}
+  else if(a==='go-account'){ui.screen='account';ACC.err='';ACC.msg='';accAdminCheck();}
+  else if(a==='go-admin'){ui.screen='admin';ADM.msg='';ADM.err='';ADM.ask=null;admLoad();return;}
+  else if(a==='adm-reload'){admLoad();return;}
+  else if(a==='adm-ask'){const [id,kind]=String(v).split(':');if(ADM_ACT[kind]) ADM.ask=[id,kind];}
+  else if(a==='adm-no'){ADM.ask=null;}
+  else if(a==='adm-yes'){admDo();return;}
+  else if(a==='aa-open'){aaOpen(null);}
+  else if(a==='aa-cancel'){AA.open=false;}
+  else if(a==='aa-go'){aaGo();return;}
+  else if(a==='acc-unlink'){const u=findUser(v);if(u&&u.cid!==ACC.id){u.ctok='';u.cid='';saveStore();ACC.msg=u.name+' ist abgemeldet. Die Statistik bleibt als Profil auf diesem Gerät.';}}
   else if(a==='go-profiles'){ui.screen='profiles';PROF.open=null;PROF.err='';if(cloudOn()&&PROF.list===null) profLoadList();}
   else if(a==='prof-open'){profOpen(v);return;}
   else if(a==='prof-back'){PROF.open=null;ui.fv=null;ui.chartUser=null;}
@@ -3266,6 +3565,7 @@ root.addEventListener('click',e=>{
   else if(a==='mult'){ui.mult=+v;}
   else if(a==='input'){ui.input=v;}
   else if(a==='clang'){ui.cfg.lang=v;saveSetup();}
+  else if(a==='dart-edit'){const i=+v;ui.edit=ui.edit===i?null:i;}
   else if(a==='voice'){ui.cfg.voice=v;if(REC.on)micStop();saveSetup();}
   else if(a==='off-load'){offLoad();return;}
   else if(a==='ctest'){unlockSpeech();say(CL().test,{flush:true});}
@@ -3313,6 +3613,9 @@ root.addEventListener('input',e=>{
   else if(d.favroute!==undefined){ui.favRoute=e.target.value;}
   else if(d.h100val!==undefined){if(H100.run) H100.run.val=e.target.value;}
   else if(d.skin!==undefined){const u=charUser();if(u&&(d.skin==='hc'||d.skin==='sc')&&hexOk(e.target.value)){u.skin[d.skin]=e.target.value;saveStore();}}
+  else if(d.adm!==undefined){ADM.q=e.target.value;}
+  else if(d.aa!==undefined){AA[d.aa]=d.aa==='pin'?e.target.value.replace(/\D/g,'').slice(0,6):e.target.value;}
+  else if(d.pq!==undefined){PROF_Q.q=e.target.value;const f=e.target.selectionStart;render();const n=root.querySelector('[data-pq]');if(n){n.focus();try{n.setSelectionRange(f,f);}catch(_){}}}
   else if(d.acc!==undefined){ACC[d.acc]=d.acc==='pin'||d.acc==='pin2'||d.acc==='oldpin'?e.target.value.replace(/\D/g,'').slice(0,6):e.target.value;}
 });
 
@@ -3327,6 +3630,8 @@ root.addEventListener('keydown',e=>{
   if(e.key!=='Enter') return;
   if(d.newname!==undefined&&ui.newSlot!==null){e.preventDefault();doCreate(ui.newSlot);render();}
   else if(d.favscore!==undefined||d.favroute!==undefined){e.preventDefault();addFavRoute();render();}
+  else if(d.adm!==undefined){e.preventDefault();admLoad();}
+  else if(d.aa!==undefined){e.preventDefault();aaGo();}
   else if(d.acc!==undefined&&ui.screen==='account'){e.preventDefault();if(ACC.token) accChangePin(); else accEnter(ACC.tab==='register'?'register':'login');}
 });
 root.addEventListener('change',e=>{
@@ -3344,7 +3649,8 @@ root.addEventListener('change',e=>{
   }
   else if(d.slot!==undefined){
     const i=+d.slot,v=e.target.value,sl=ui.cfg.slots[i];
-    if(v==='__new'){ui.newSlot=i;ui.newText='';ui.err='';ui.focusNew=true;}
+    if(v==='__acc'){aaOpen(i);}
+    else if(v==='__new'){ui.newSlot=i;ui.newText='';ui.err='';ui.focusNew=true;}
     else if(v==='__remote'){sl.remote=true;sl.bot=0;sl.uid=null;if(ui.newSlot===i)ui.newSlot=null;}
     else if(v==='__bot'){sl.remote=false;sl.bot=sl.bot||3;sl.uid=null;if(ui.newSlot===i)ui.newSlot=null;saveSetup();}
     else{sl.remote=false;sl.bot=0;sl.uid=v||null;if(ui.newSlot===i)ui.newSlot=null;saveSetup();}

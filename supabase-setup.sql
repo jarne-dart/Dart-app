@@ -484,3 +484,139 @@ grant execute on function public.dart100_status(uuid)         to anon, authentic
 grant execute on function public.dart100_start(uuid)          to anon, authenticated;
 grant execute on function public.dart100_submit(uuid, jsonb)  to anon, authenticated;
 grant execute on function public.dart100_rewards(uuid)        to anon, authenticated;
+
+
+-- =====================================================================
+-- ERWEITERUNG 3: Admin-Bereich, Profilliste mit Figuren, Shop-Daten
+-- (darf mehrfach ausgeführt werden)
+-- =====================================================================
+
+alter table public.dart_players add column if not exists frozen boolean not null default false;
+
+create table if not exists public.dart_admins (
+  player_id uuid primary key references public.dart_players(id) on delete cascade
+);
+alter table public.dart_admins enable row level security;
+revoke all on public.dart_admins from anon, authenticated;
+
+create or replace function public.dart_is_admin(p_token uuid)
+returns boolean language sql security definer set search_path = public as $$
+  select exists (select 1 from public.dart_admins a where a.player_id = public.dart_player_from_token(p_token))
+$$;
+revoke all on function public.dart_is_admin(uuid) from public, anon, authenticated;
+
+-- eigenes Konto: jetzt mit Admin-Kennzeichen
+create or replace function public.dart_me(p_token uuid)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare v_id uuid := public.dart_player_from_token(p_token); r public.dart_players%rowtype;
+begin
+  if v_id is null then return jsonb_build_object('error','no_session'); end if;
+  select * into r from public.dart_players where id = v_id;
+  return jsonb_build_object('id', r.id, 'name', r.name, 'public', r.is_public,
+                            'stats', r.stats, 'hist', r.hist, 'games', r.games,
+                            'skin', r.skin, 'bp', r.bp,
+                            'admin', exists (select 1 from public.dart_admins a where a.player_id = v_id));
+end $$;
+
+-- gesperrte Konten können keine Statistik mehr hochladen (Antwort wie bei Erfolg)
+create or replace function public.dart_push(p_token uuid, p_stats jsonb, p_hist jsonb, p_games jsonb)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare v_id uuid := public.dart_player_from_token(p_token); v_frozen boolean;
+begin
+  if v_id is null then return jsonb_build_object('error','no_session'); end if;
+  if jsonb_typeof(p_stats) <> 'object' or jsonb_typeof(p_hist) <> 'array' or jsonb_typeof(p_games) <> 'array' then
+    return jsonb_build_object('error','bad_data');
+  end if;
+  if length(p_stats::text) > 20000 or length(p_hist::text) > 400000 or length(p_games::text) > 20000 then
+    return jsonb_build_object('error','too_big');
+  end if;
+  select frozen into v_frozen from public.dart_players where id = v_id;
+  if coalesce(v_frozen, false) then return jsonb_build_object('ok', true, 'frozen', true); end if;
+  update public.dart_players
+     set stats = p_stats, hist = p_hist, games = p_games, updated_at = now()
+   where id = v_id;
+  return jsonb_build_object('ok', true);
+end $$;
+
+-- Charakterdaten dürfen jetzt auch Coins und gekaufte Teile enthalten
+create or replace function public.dart_push_char(p_token uuid, p_skin jsonb, p_bp jsonb)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare v_id uuid := public.dart_player_from_token(p_token);
+begin
+  if v_id is null then return jsonb_build_object('error','no_session'); end if;
+  if jsonb_typeof(p_skin) <> 'object' or jsonb_typeof(p_bp) <> 'object' then return jsonb_build_object('error','bad_data'); end if;
+  if length(p_skin::text) > 2000 or length(p_bp::text) > 12000 then return jsonb_build_object('error','too_big'); end if;
+  update public.dart_players set skin = p_skin, bp = p_bp where id = v_id;
+  return jsonb_build_object('ok', true);
+end $$;
+
+-- Profilliste: mit Figur und Battle-Pass-Punkten
+create or replace function public.dart_list_public()
+returns jsonb language sql security definer set search_path = public as $$
+  select coalesce(jsonb_agg(x order by lower(x->>'name')), '[]'::jsonb) from (
+    select jsonb_build_object('id', id, 'name', name, 'x01', stats->'x01', 'updated', updated_at,
+                              'skin', skin, 'pts', coalesce(bp->'pts', '0'::jsonb)) as x
+    from public.dart_players where is_public order by lower(name) limit 200
+  ) t
+$$;
+
+-- ---------- Admin-Funktionen (nur für Konten in dart_admins) ----------
+create or replace function public.dart_admin_list(p_token uuid, p_q text default '')
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare out jsonb;
+begin
+  if not public.dart_is_admin(p_token) then return jsonb_build_object('error','forbidden'); end if;
+  select coalesce(jsonb_agg(x order by lower(x->>'name')), '[]'::jsonb) into out from (
+    select jsonb_build_object('id', p.id, 'name', p.name, 'public', p.is_public, 'frozen', p.frozen,
+                              'stats', p.stats, 'updated', p.updated_at,
+                              'admin', exists (select 1 from public.dart_admins a where a.player_id = p.id),
+                              'h100', (select count(*) from public.dart100_runs r where r.player_id = p.id and r.submitted_at is not null)) as x
+    from public.dart_players p
+    where coalesce(p_q, '') = '' or p.name ilike '%' || replace(replace(p_q, '%', ''), '_', '') || '%'
+    order by p.updated_at desc limit 300
+  ) t;
+  return out;
+end $$;
+
+create or replace function public.dart_admin_reset_stats(p_token uuid, p_id uuid)
+returns jsonb language plpgsql security definer set search_path = public as $$
+begin
+  if not public.dart_is_admin(p_token) then return jsonb_build_object('error','forbidden'); end if;
+  update public.dart_players set stats = '{}'::jsonb, hist = '[]'::jsonb, games = '[]'::jsonb, frozen = true, updated_at = now() where id = p_id;
+  return jsonb_build_object('ok', true);
+end $$;
+
+create or replace function public.dart_admin_unfreeze(p_token uuid, p_id uuid)
+returns jsonb language plpgsql security definer set search_path = public as $$
+begin
+  if not public.dart_is_admin(p_token) then return jsonb_build_object('error','forbidden'); end if;
+  update public.dart_players set frozen = false where id = p_id;
+  return jsonb_build_object('ok', true);
+end $$;
+
+create or replace function public.dart_admin_delete_h100(p_token uuid, p_id uuid)
+returns jsonb language plpgsql security definer set search_path = public as $$
+begin
+  if not public.dart_is_admin(p_token) then return jsonb_build_object('error','forbidden'); end if;
+  delete from public.dart100_runs where player_id = p_id;
+  return jsonb_build_object('ok', true);
+end $$;
+
+create or replace function public.dart_admin_delete_player(p_token uuid, p_id uuid)
+returns jsonb language plpgsql security definer set search_path = public as $$
+begin
+  if not public.dart_is_admin(p_token) then return jsonb_build_object('error','forbidden'); end if;
+  if p_id = public.dart_player_from_token(p_token) then return jsonb_build_object('error','bad_data'); end if;
+  delete from public.dart_players where id = p_id;
+  return jsonb_build_object('ok', true);
+end $$;
+
+grant execute on function public.dart_me(uuid)                       to anon, authenticated;
+grant execute on function public.dart_push(uuid, jsonb, jsonb, jsonb) to anon, authenticated;
+grant execute on function public.dart_push_char(uuid, jsonb, jsonb)  to anon, authenticated;
+grant execute on function public.dart_list_public()                  to anon, authenticated;
+grant execute on function public.dart_admin_list(uuid, text)         to anon, authenticated;
+grant execute on function public.dart_admin_reset_stats(uuid, uuid)  to anon, authenticated;
+grant execute on function public.dart_admin_unfreeze(uuid, uuid)     to anon, authenticated;
+grant execute on function public.dart_admin_delete_h100(uuid, uuid)  to anon, authenticated;
+grant execute on function public.dart_admin_delete_player(uuid, uuid) to anon, authenticated;

@@ -68,6 +68,27 @@ Wenn dein Server schon läuft, musst du nur einmal das neue Skript einspielen:
 Ohne dieses Update funktionieren Konten wie bisher, aber "The 100" und die
 Synchronisierung des Charakters sind nicht verfügbar.
 
+UPDATE 3 (Admin-Bereich, Profile mit Figuren, Shop)
+---------------------------------------------------
+Auch dafür genügt es, die neue supabase-setup.sql einmal komplett auszuführen
+(siehe Schritte oben). Sie darf beliebig oft ausgeführt werden.
+
+ADMIN-KONTO EINRICHTEN
+Ein Admin kann in der App Statistiken suspekter Spieler löschen. Das geht so:
+1. Lege dir in der App ein ganz normales Konto an (Profil -> Konto -> "Ich bin neu").
+2. Supabase -> SQL Editor -> "+" / "New snippet", dann diese Zeile einfügen. Ersetze
+   DEINNAME durch den Namen deines Kontos (Groß- und Kleinschreibung egal):
+
+   insert into public.dart_admins (player_id)
+   select id from public.dart_players where lower(name) = lower('DEINNAME')
+   on conflict do nothing;
+
+3. "Run" klicken. In der App einmal Profil -> Konto öffnen: Dort steht jetzt
+   "Admin-Bereich öffnen".
+Weitere Admins legst du mit derselben Zeile an. Admin-Rechte entziehen:
+   delete from public.dart_admins
+   where player_id = (select id from public.dart_players where lower(name) = lower('NAME'));
+
 "The 100": Starten kann man jeden Tag zwischen 12:00 und 23:59 Uhr (deutsche Zeit). Ab dem
 Start hat man eine Stunde am Stück. Die Zeiten stehen im Skript in den Funktionen
 dart100_opens und dart100_closes und können dort geändert werden.
