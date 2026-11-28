@@ -325,9 +325,10 @@ table.lb td{padding:7px 4px;border-top:1px solid var(--line)}table.lb tr.me td{c
 .rar{box-shadow:inset 0 -3px 0 var(--rc)}
 .rtag{display:inline-block;font-size:11px;font-weight:700;padding:1px 7px;border-radius:999px;border:1px solid var(--rc);color:var(--rc)}
 .bpscroll{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 12px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
-.bpc{flex:0 0 118px;scroll-snap-align:center;background:var(--panel);border:1px solid var(--line);border-top:5px solid var(--rc);border-radius:12px;padding:9px 9px 10px;display:flex;flex-direction:column;gap:4px;min-height:152px}
+.bpc{flex:0 0 124px;scroll-snap-align:center;background:var(--panel);border:1px solid var(--line);border-top:5px solid var(--rc);border-radius:12px;padding:9px 9px 10px;display:flex;flex-direction:column;gap:4px;min-height:250px}
 .bpc.got{border-color:var(--good);border-top-color:var(--rc)}
 .bpc.now{box-shadow:0 0 0 2px var(--accent)}
+.bpcf{background:rgba(127,127,127,.12);border-radius:8px;display:flex;justify-content:center}
 .bpcn{font-size:12px;color:var(--muted);font-weight:700}
 .bpci{font-weight:700;font-size:14px;line-height:1.2}
 .bpcs{font-size:11px;color:var(--muted)}
@@ -2382,7 +2383,7 @@ function figParts(k,bust){
   const S=(p,r,c,o)=>P.push(Object.assign({t:'s',x:p[0],y:p[1],z:p[2],r,c},o||{}));
   const Cy=(x,y,z,r,h,c)=>P.push({t:'c',x,y,z,r,h,c});
   const F=(d,kk,r,c,o)=>{const p=onHead(d,kk);P.push({t:'f',x:p[0],y:p[1],z:p[2],nx:d[0],ny:d[1],nz:d[2],r,c,o:o||null});};
-  const cap=(a,b,r,c,n,nv)=>{n=n||4;for(let i=0;i<=n;i++){const t=i/n;S([a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t],r,c,{n:nv||[0,.15,1]});}};
+  const cap=(a,b,r,c,n,nv)=>{n=(n||4)*3;for(let i=0;i<=n;i++){const t=i/n;S([a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t],r,c,{n:nv||[0,.15,1]});}};
   const pants='#2d3347',shirtC=SHIRT_COL[k.shirt]||SHIRT_COL.blue,sk=k.sc,hc=k.hc,GOLD='#d9b13a';
   const sleeve=sd=>mixHex(k.shirt==='split'?(sd<0?'#2f6fd1':'#d33b3b'):k.shirt==='stripes'?'#2f6fd1':shirtC,.9);
   const H=[.46*BS,1.46*BS,.48*BS]; // Hand, die den Gegenstand hält
@@ -2392,21 +2393,21 @@ function figParts(k,bust){
   S([0,1.27,0],.27,pants,{n:[0,.3,1]});
 
   /* Hinten getragene Extras */
-  if(k.extra==='cape'||k.extra==='cape2'){const c=k.extra==='cape'?'#c0272d':GOLD;for(let j=0;j<7;j++)for(let i=0;i<5;i++)S([-.3+i*.15,2.07-j*.13,-.3-j*.01],.13,c,{n:[0,0,-1]});}
+  if(k.extra==='cape'||k.extra==='cape2'){const c=k.extra==='cape'?'#c0272d':GOLD;for(let j=0;j<16;j++)for(let i=0;i<11;i++)S([-.3+i*.06,2.07-j*.057,-.3-j*.004],.07,c,{n:[0,0,-1]});}
   if(k.extra==='wings')[-1,1].forEach(sd=>{for(let i=0;i<5;i++)for(let j=0;j<3;j++)S([sd*(.4+i*.2),2.1+i*.12-j*.2,-.32-i*.02],.12,j===2?'#e4e4e4':'#f6f6f6',{n:[0,0,-1]});});
 
   /* Oberkörper: Schale aus Kugeln, Querschnitt oval, Taille schmaler */
   const RX=[.30,.27,.27,.30,.34,.37,.38,.34,.22];
-  for(let j=0;j<9;j++){
-    const y=1.25+j*.1065,rx=RX[j],rz=rx*.68;
-    for(let a=0;a<14;a++){
-      const ang=a/14*6.2832,cx=Math.cos(ang),sz=Math.sin(ang);
+  for(let jj=0;jj<=20;jj++){
+    const t=jj/20*8,j0=Math.min(7,Math.floor(t)),fr=t-j0,rx=RX[j0]+(RX[j0+1]-RX[j0])*fr,y=1.25+t*.1065,rz=rx*.68,j=Math.floor(t+1e-6);
+    for(let a=0;a<30;a++){
+      const ang=a/30*6.2832,cx=Math.cos(ang),sz=Math.sin(ang);
       let c=shirtC;
       if(k.shirt==='stripes') c=(j>>1)%2?'#eeeeee':'#2f6fd1';
       else if(k.shirt==='split') c=cx<0?'#2f6fd1':'#d33b3b';
-      else if(k.shirt==='checks') c=((j>>1)+(a>>1))%2?'#f1f1f1':'#c0392b';
-      else if(k.shirt==='rainbow') c=['#d33b3b','#e8872b','#f2cf2e','#2e9d57','#2f6fd1','#7a4fc9'][Math.floor(j*6/9)];
-      S([cx*rx,y,sz*rz],j===8?.12:.155,c,{n:[cx*.8,.1,sz*.8+.2]});
+      else if(k.shirt==='checks') c=((jj>>2)+(a>>2))%2?'#f1f1f1':'#c0392b';
+      else if(k.shirt==='rainbow') c=['#d33b3b','#e8872b','#f2cf2e','#2e9d57','#2f6fd1','#7a4fc9'][Math.min(5,Math.floor(t*6/8.01))];
+      S([cx*rx,y,sz*rz],jj===20?.09:.105,c,{n:[cx*.8,.1,sz*.8+.2]});
     }
   }
   [-1,1].forEach(sd=>S([sd*.4,2.04,0],.13,sleeve(sd),{n:[sd*.5,.3,.8]}));
@@ -2441,28 +2442,28 @@ function figParts(k,bust){
 
   /* Haare */
   const pts=fib(110),inCap=d=>d[1]>.38||(d[1]>-.25&&d[2]<-.15)||(d[1]>0&&Math.abs(d[0])>.78&&d[2]<.3),face=d=>d[2]>.25&&d[1]<.62&&d[1]>-.95;
-  const HS3=(d,kk,r,c)=>S(onHead(d,kk),r,c,dn(d));
-  const capHair=()=>pts.forEach(d=>{if(inCap(d)&&!face(d)) HS3(d,1.03,.17,hc);});
+  const HS3=(d,kk,r,c)=>S(onHead(d,kk),r,c,{n:d,hair:1,hk:kk});
+  const hp=fib(520),capHair=()=>hp.forEach(d=>{if(inCap(d)&&!face(d)) HS3(d,1.03,.075,hc);});
   switch(k.hair){
     case 'short':capHair();break;
-    case 'long':capHair();pts.forEach(d=>{if(d[1]>-.75&&d[1]<=-.25&&d[2]<-.1) HS3(d,1.03,.17,hc);});
+    case 'long':capHair();hp.forEach(d=>{if(d[1]>-.75&&d[1]<=-.25&&d[2]<-.1) HS3(d,1.03,.075,hc);});
       [1.95,1.78,1.6,1.45].forEach(y=>[-.3,0,.3].forEach(x=>S([x,y+.3,-.32],.17,hc,{n:[0,0,-1]})));
       [-1,1].forEach(sd=>{S([sd*.47,2.05,-.12],.14,hc,{n:[sd,0,0]});S([sd*.46,1.85,-.14],.13,hc,{n:[sd,0,0]});S([sd*.44,1.68,-.15],.12,hc,{n:[sd,0,0]});});break;
     case 'spiky':capHair();pts.filter(d=>d[1]>.5).forEach((d,i)=>{if(i%3===0) cap(onHead(d,1.0),onHead(d,1.6),.09,hc,3,d);});break;
     case 'mohawk':for(let t=20;t<=160;t+=14){const a=t*Math.PI/180,d=[0,Math.sin(a),Math.cos(a)];HS3(d,1.08,.12,hc);if(d[1]>.5) HS3(d,1.3,.1,hc);}break;
-    case 'afro':fib(60).forEach(d=>{if(d[1]>-.3&&!(d[2]>.3&&d[1]<.68)) HS3(d,1.1,.27,hc);});break;
+    case 'afro':fib(380).forEach(d=>{if(d[1]>-.3&&!(d[2]>.3&&d[1]<.68)) HS3(d,1.12,.12,hc);});break;
     case 'bun':capHair();S([0,HC[1]+.5,-.38],.2,hc,dn([0,.5,-1]));S([0,HC[1]+.58,-.4],.12,hc,dn([0,1,-.5]));break;
     case 'pony':capHair();cap([0,HC[1]+.25,-.52],[0,HC[1]-.5,-.78],.15,hc,5,[0,0,-1]);S([0,HC[1]+.25,-.52],.08,'#d33b3b',dn([0,0,-1]));break;
     case 'twin':capHair();[-1,1].forEach(sd=>{cap([sd*.52,HC[1]+.02,-.12],[sd*.74,HC[1]-.7,-.1],.14,hc,5,[sd,0,0]);S([sd*.54,HC[1]-.05,-.12],.08,'#d33b3b',dn([sd,0,0]));});break;
-    case 'curly':fib(90).forEach(d=>{if(d[1]>-.35&&!face(d)) HS3(d,1.06,.2,hc);});break;
-    case 'rainbow':{const RB=['#d33b3b','#e8872b','#f2cf2e','#2e9d57','#2f6fd1','#7a4fc9'];pts.forEach(d=>{if(inCap(d)&&!face(d)) HS3(d,1.03,.18,RB[Math.floor((d[0]+1)*2.99)]);});break;}
+    case 'curly':hp.forEach(d=>{if(d[1]>-.35&&!face(d)) HS3(d,1.08,.09,hc);});break;
+    case 'rainbow':{const RB=['#d33b3b','#e8872b','#f2cf2e','#2e9d57','#2f6fd1','#7a4fc9'];hp.forEach(d=>{if(inCap(d)&&!face(d)) HS3(d,1.03,.075,RB[Math.floor((d[0]+1)*2.99)]);});break;}
     case 'flame':capHair();pts.filter(d=>d[1]>.35&&!face(d)).forEach((d,i)=>{if(i%2===0) cap(onHead(d,1.0),onHead(d,1.5+(i%4)*.12),.1,i%4?'#ffb52e':'#e8481a',3,d);});break;
     case 'side':capHair();S([-.18,HC[1]+.52,.4],.15,hc,dn([0,.6,1]));S([0,HC[1]+.55,.38],.15,hc,dn([0,.6,1]));S([.2,HC[1]+.5,.4],.13,hc,dn([0,.6,1]));break;
   }
 
   /* Kopfbedeckung */
-  const dome=(c,kk,r,ymin)=>pts.forEach(d=>{if(d[1]>ymin) HS3(d,kk,r,c);});
-  const ring=(y,rad,n,r,c)=>{for(let a=0;a<n;a++){const g=a/n*6.2832;S([Math.cos(g)*rad,y,Math.sin(g)*rad],r,c,dn([Math.cos(g),.2,Math.sin(g)]));}};
+  const dome=(c,kk,r,ymin)=>hp.forEach(d=>{if(d[1]>ymin) HS3(d,kk,r*.42,c);});
+  const ring=(y,rad,n,r,c)=>{n*=2;r*=.7;for(let a=0;a<n;a++){const g=a/n*6.2832;S([Math.cos(g)*rad,y,Math.sin(g)*rad],r,c,dn([Math.cos(g),.2,Math.sin(g)]));}};
   switch(k.hat){
     case 'cap':dome('#d33b3b',1.08,.17,.35);[[0,.3,.58,.13],[.16,.29,.55,.12],[-.16,.29,.55,.12],[0,.28,.7,.1],[.1,.28,.68,.09],[-.1,.28,.68,.09]].forEach(b=>S([HC[0]+b[0],HC[1]+b[1],HC[2]+b[2]],b[3],'#a82727',dn([0,1,.6])));break;
     case 'beanie':dome('#e8872b',1.12,.2,.2);ring(HC[1]+.16,.5,16,.08,'#f08e30');S([0,HC[1]+.62,0],.13,'#f4f4f4',dn([0,1,0]));break;
@@ -2473,7 +2474,7 @@ function figParts(k,bust){
     case 'headband':ring(HC[1]+.14,.48,16,.07,'#d33b3b');S([0,HC[1]+.14,-.5],.1,'#d33b3b',dn([0,0,-1]));break;
     case 'helmet':dome('#7a8088',1.16,.24,.0);for(let t=15;t<=165;t+=15){const a=t*Math.PI/180,d=[0,Math.sin(a),Math.cos(a)];HS3(d,1.27,.07,'#aeb4bc');}break;
     case 'laurel':ring(HC[1]+.18,.52,18,.07,'#3f8f3a');ring(HC[1]+.2,.54,6,.06,GOLD);break;
-    case 'party':for(let i=0;i<6;i++) S([0,HC[1]+.5+i*.12,0],.2-i*.03,i%2?'#ff5fa2':'#3ec6e0',dn([0,1,0]));S([0,HC[1]+1.2,0],.06,'#ffe27a',dn([0,1,0]));break;
+    case 'party':for(let i=0;i<24;i++) S([0,HC[1]+.5+i*.03,0],.2-i*.0075,(i>>2)%2?'#ff5fa2':'#3ec6e0',dn([0,1,0]));S([0,HC[1]+1.2,0],.06,'#ffe27a',dn([0,1,0]));break;
     case 'chef':Cy(0,HC[1]+.5,0,.4,.2,'#f4f4f4');for(let a=0;a<6;a++){const g=a/6*6.2832;S([Math.cos(g)*.22,HC[1]+.8,Math.sin(g)*.22],.22,'#fafafa',dn([Math.cos(g),1,Math.sin(g)]));}S([0,HC[1]+.95,0],.24,'#ffffff',dn([0,1,0]));break;
     case 'cowboy':Cy(0,HC[1]+.42,0,.8,.04,'#8a5a2b');Cy(0,HC[1]+.62,0,.36,.38,'#9a6a33');Cy(0,HC[1]+.48,0,.37,.08,'#3b2a1a');break;
     case 'propeller':dome('#2f6fd1',1.08,.17,.35);Cy(0,HC[1]+.62,0,.025,.18,'#444');cap([-.36,HC[1]+.74,0],[.36,HC[1]+.74,0],.05,'#e03a3a',4);cap([0,HC[1]+.74,-.36],[0,HC[1]+.74,.36],.05,'#f2cf2e',4);S([0,HC[1]+.74,0],.07,'#222',dn([0,1,0]));break;
@@ -2481,8 +2482,8 @@ function figParts(k,bust){
     case 'cat':dome('#3a3a3e',1.05,.17,.45);[-1,1].forEach(sd=>{cap([sd*.3,HC[1]+.4,0],[sd*.4,HC[1]+.78,0],.12,'#3a3a3e',3,[sd,.4,1]);S([sd*.37,HC[1]+.7,.06],.06,'#ffb3c8',dn([0,.3,1]));});break;
     case 'phones':for(let t=0;t<=180;t+=15){const a=t*Math.PI/180;S([Math.cos(a)*.57,HC[1]+Math.sin(a)*.57,0],.05,'#222',dn([0,1,0]));}[-1,1].forEach(sd=>{S([sd*.54,HC[1]-.02,0],.17,'#2a2a2e',dn([sd,0,0]));S([sd*.62,HC[1]-.02,0],.12,'#d33b3b',dn([sd,0,0]));});break;
     case 'viking':dome('#8a8f98',1.12,.2,.1);[-1,1].forEach(sd=>{cap([sd*.5,HC[1]+.25,0],[sd*.8,HC[1]+.42,0],.09,'#f1ead2',3,[sd,.3,0]);cap([sd*.8,HC[1]+.42,0],[sd*.92,HC[1]+.85,0],.06,'#f1ead2',3,[sd,.3,0]);});break;
-    case 'unicorn':for(let i=0;i<5;i++) S([0,HC[1]+.5+i*.15,.12+i*.02],.12-i*.02,i%2?'#ffe9a8':'#ffd1f0',dn([0,1,.4]));[-1,1].forEach(sd=>cap([sd*.25,HC[1]+.42,-.05],[sd*.3,HC[1]+.65,-.05],.07,'#f4f4f4',2,[sd,1,0]));break;
-    case 'wizard':Cy(0,HC[1]+.42,0,.7,.04,'#3b2a8a');for(let i=0;i<7;i++) S([0,HC[1]+.5+i*.14,-i*.02],.4-i*.055,'#3b2a8a',dn([0,1,.3]));S([0,HC[1]+.72,.36],.05,'#ffd84a',dn([0,0,1]));S([.12,HC[1]+.95,.28],.04,'#ffd84a',dn([0,0,1]));break;
+    case 'unicorn':for(let i=0;i<20;i++) S([0,HC[1]+.5+i*.038,.12+i*.005],.12-i*.005,(i>>2)%2?'#ffe9a8':'#ffd1f0',dn([0,1,.4]));[-1,1].forEach(sd=>cap([sd*.25,HC[1]+.42,-.05],[sd*.3,HC[1]+.65,-.05],.07,'#f4f4f4',2,[sd,1,0]));break;
+    case 'wizard':Cy(0,HC[1]+.42,0,.7,.04,'#3b2a8a');for(let i=0;i<28;i++) S([0,HC[1]+.5+i*.035,-i*.005],.4-i*.0137,'#3b2a8a',dn([0,1,.3]));S([0,HC[1]+.72,.36],.05,'#ffd84a',dn([0,0,1]));S([.12,HC[1]+.95,.28],.04,'#ffd84a',dn([0,0,1]));break;
   }
 
   /* Brille */
@@ -2542,10 +2543,11 @@ function figDraw(cv,k,yaw,pitch,bust){
   const L=_unit([-.4,.7,.6]);
   ctx.clearRect(0,0,W,H);
   if(!bust){const g=rot(0,0,0);ctx.fillStyle='rgba(0,0,0,.28)';ctx.beginPath();ctx.ellipse(W/2,H/2-g[1]*sc,sc*.85,sc*.2,0,0,7);ctx.fill();}
-  const items=[],hz=rot(HEAD_AT[0],HEAD_AT[1],HEAD_AT[2])[2]+HR*HS*.8+.01;  // Gesichtsteile liegen immer vor dem Kopf, aber hinter Haaren/Ohren der Seite
+  const hz0=rot(HEAD_AT[0],HEAD_AT[1],HEAD_AT[2])[2]+HR*HS*.8,items=[],hz=hz0+.3;  // Gesichtsteile liegen immer vor dem Kopf, aber hinter Haaren/Ohren der Seite
   figCached(k,bust).forEach(p=>{
     const r=rot(p.x,p.y,p.z),f=1/(1-r[2]*.05),X=W/2+r[0]*sc*f,Y=H/2-r[1]*sc*f;
-    if(p.t==='s') items.push({p,X,Y,z:r[2]+p.r*.8,R:p.r*sc*f});
+    if(p.t==='s'&&p.hair){const nz=rotN(p.n[0],p.n[1],p.n[2])[2];items.push({p,X,Y,z:nz>-.15?hz0+(p.hk-1)*.1+nz*.004:hz0-1-(p.hk-1),R:p.r*sc*f});}
+    else if(p.t==='s') items.push({p,X,Y,z:r[2]+p.r*.8,R:p.r*sc*f});
     else if(p.t==='c'){
       const yt=H/2-rot(p.x,p.y+p.h/2,p.z)[1]*sc*f,yb=H/2-rot(p.x,p.y-p.h/2,p.z)[1]*sc*f;
       items.push({p,X,Y,z:r[2]+p.r*.5,R:p.r*sc*f,yt,yb});
@@ -2613,10 +2615,13 @@ function charUser(){
 }
 const itemSlot=id=>(SLOTS.find(x=>id.startsWith(x[0]+':'))||['',''])[1];
 const rarTag=r=>`<span class="rtag" style="--rc:${RAR[r][1]}">${RAR[r][0]}</span>`;
+function itemPreview(x,u,w){
+  const [sl,val]=x.id.split(':'),prev=Object.assign({},u.skin,{[sl]:val}),bust=sl==='hair'||sl==='hat'||sl==='glasses';
+  return figCanvas(prev,w,bust?w:Math.round(w*1.3),{bust:bust?1:0});
+}
 function shopCard(x,u){
-  const own=itemOwned(u.bp,x.id),price=PRICE[x.r],can=coinsOf(u.bp)>=price,[sl,val]=x.id.split(':');
-  const prev=Object.assign({},u.skin,{[sl]:val}),bust=sl==='hair'||sl==='hat'||sl==='glasses';
-  return `<div class="shopc" style="--rc:${RAR[x.r][1]}"><div class="shopf">${figCanvas(prev,bust?96:92,bust?96:124,{bust:bust?1:0})}</div>
+  const own=itemOwned(u.bp,x.id),price=PRICE[x.r],can=coinsOf(u.bp)>=price;
+  return `<div class="shopc" style="--rc:${RAR[x.r][1]}"><div class="shopf">${itemPreview(x,u,96)}</div>
     <div class="shopn">${esc(x.n)}</div><div class="shops">${itemSlot(x.id)} ${rarTag(x.r)}</div>
     ${own?`<div class="shopb own">Besitzt du</div>`:`<button class="shopb ${can?'':'no'}" data-act="shop-buy" data-v="${esc(x.id)}">🪙 ${price}</button>`}</div>`;
 }
@@ -2645,7 +2650,7 @@ function renderChar(){
     const cards=[];
     for(let l=1;l<=BP_MAX;l++){
       const x=BP_ITEMS.find(y=>y.lvl===l),got=l<=lv.lvl,co=bpCoin(l),r=x?x.r:0;
-      cards.push(`<div class="bpc ${got?'got':''} ${l===lv.lvl?'now':''}" style="--rc:${x?RAR[r][1]:'#6b7684'}"><div class="bpcn">Stufe ${l}</div>${x?`<div class="bpci">${esc(x.n)}</div><div class="bpcs">${itemSlot(x.id)}</div>${rarTag(r)}`:`<div class="bpci">Coins</div><div class="bpcs">Keine neue Kleidung</div>`}${co?`<div class="bpcc">+${co} 🪙</div>`:''}<div class="bpck">${got?'✔ erhalten':'🔒'}</div></div>`);
+      cards.push(`<div class="bpc ${got?'got':''} ${l===lv.lvl?'now':''}" style="--rc:${x?RAR[r][1]:'#6b7684'}"><div class="bpcn">Stufe ${l}</div>${x?`<div class="bpcf">${itemPreview(x,u,84)}</div><div class="bpci">${esc(x.n)}</div><div class="bpcs">${itemSlot(x.id)}</div>${rarTag(r)}`:`<div class="bpci">Coins</div><div class="bpcs">Keine neue Kleidung</div>`}${co?`<div class="bpcc">+${co} 🪙</div>`:''}<div class="bpck">${got?'✔ erhalten':'🔒'}</div></div>`);
     }
     const bw=u.bp.bw.map((v,i)=>`<div class="bprow ${v?'got':''}"><span class="bpn">${i+1}</span><span class="bpi">${esc(BOT_LEVELS[i].name)}<small>Sieg ${BP_WIN[i]} · Niederlage ${BP_LOSS[i]} Punkte</small></span><span class="bps">${v?'✔ +'+BP_FIRST:'+'+BP_FIRST}</span></div>`).join('');
     body=`<h2>Belohnungen</h2><div class="rules" style="margin-bottom:8px">Nach links und rechts wischen. Stufe 1 bis 5 kosten je ${bpCost(1)} Punkte, danach wird jede Stufe um 20 Punkte teurer (höchstens ${bpCost(BP_MAX)}). Alle 5 Stufen gibt es Coins, ab Stufe 41 jede Stufe.</div>
